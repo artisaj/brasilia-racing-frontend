@@ -39,6 +39,11 @@
       @if (isLoading()) {
         <p>Carregando logs...</p>
       } @else {
+        <div class="pagination-summary">
+          <p>{{ pageRangeLabel() }}</p>
+          <p>Página {{ currentPage() }} de {{ lastPage() }}</p>
+        </div>
+
         <div class="table-wrapper">
           <table mat-table [dataSource]="logs()" class="mat-elevation-z1">
             <ng-container matColumnDef="id">
@@ -80,6 +85,20 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
           </table>
+        </div>
+
+        <div class="pagination-actions">
+          <button mat-stroked-button type="button" (click)="previousPage()" [disabled]="currentPage() <= 1 || isLoading()">
+            Anterior
+          </button>
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="nextPage()"
+            [disabled]="currentPage() >= lastPage() || isLoading()"
+          >
+            Próxima
+          </button>
         </div>
       }
     </mat-card-content>

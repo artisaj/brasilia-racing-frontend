@@ -36,6 +36,7 @@ export interface AuditLogFilters {
   user_id?: string;
   request_id?: string;
   per_page?: number;
+  page?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -45,6 +46,10 @@ export class AdminAuditLogsService {
 
   list(filters: AuditLogFilters): Observable<PaginatedResponse<AdminAuditLog>> {
     let params = new HttpParams().set('per_page', String(filters.per_page ?? 30));
+
+    if (filters.page && filters.page > 0) {
+      params = params.set('page', String(filters.page));
+    }
 
     if (filters.action?.trim()) {
       params = params.set('action', filters.action.trim());

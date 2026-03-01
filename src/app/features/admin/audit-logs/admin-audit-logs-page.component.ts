@@ -33,6 +33,10 @@ export class AdminAuditLogsPageComponent implements OnInit {
   readonly isLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly logs = signal<AdminAuditLog[]>([]);
+  readonly currentPage = signal(1);
+  readonly lastPage = signal(1);
+  readonly totalItems = signal(0);
+  readonly perPage = signal(50);
   readonly displayedColumns = ['id', 'action', 'user', 'request_id', 'resource', 'created_at'];
 
   readonly filtersForm = this.formBuilder.nonNullable.group({
@@ -45,7 +49,7 @@ export class AdminAuditLogsPageComponent implements OnInit {
     this.loadLogs();
   }
 
-  loadLogs(): void {
+  loadLogs(page = 1): void {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
@@ -56,11 +60,16 @@ export class AdminAuditLogsPageComponent implements OnInit {
         action,
         user_id,
         request_id,
-        per_page: 50,
+        per_page: this.perPage(),
+        page,
       })
       .subscribe({
         next: (response) => {
           this.logs.set(response.data);
+          this.currentPage.set(response.current_page);
+          this.lastPage.set(response.last_page);
+          this.totalItems.set(response.total);
+          this.perPage.set(response.per_page);
           this.isLoading.set(false);
         },
         error: () => {
@@ -71,7 +80,7 @@ export class AdminAuditLogsPageComponent implements OnInit {
   }
 
   applyFilters(): void {
-    this.loadLogs();
+    this.loadLogs(1);
   }
 
   clearFilters(): void {
@@ -81,7 +90,36 @@ export class AdminAuditLogsPageComponent implements OnInit {
       request_id: '',
     });
 
-    this.loadLogs();
+    this.loadLogs(1);
+  }
+
+  previousPage(): void {
+    if (this.currentPage() <= 1 || this.isLoading()) {
+      return;
+    }
+
+    this.loadLogs(this.currentPage() - 1);
+  }
+
+  nextPage(): void {
+    if (this.currentPage() >= this.lastPage() || this.isLoading()) {
+      return;
+    }
+
+    this.loadLogs(this.currentPage() + 1);
+  }
+
+  pageRangeLabel(): string {
+    const total = this.totalItems();
+
+    if (total === 0) {
+      return 'Nenhum registro encontrado';
+    }
+
+    const start = (this.currentPage() - 1) * this.perPage() + 1;
+    const end = Math.min(this.currentPage() * this.perPage(), total);
+
+    return `Exibindo ${start}-${end} de ${total}`;
   }
 
   resourceLabel(log: AdminAuditLog): string {

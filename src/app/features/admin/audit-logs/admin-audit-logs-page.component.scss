@@ -28,6 +28,24 @@
   overflow-x: auto;
 }
 
+.pagination-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+
+  p {
+    margin: 0;
+  }
+}
+
+.pagination-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 table {
   width: 100%;
 }
@@ -40,5 +58,10 @@ table {
 @media (max-width: 900px) {
   .filters-form {
     grid-template-columns: 1fr;
+  }
+
+  .pagination-summary {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
