@@ -18,6 +18,25 @@
   grid-column: 1 / -1;
 }
 
+.cover-upload {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cover-preview {
+  width: 220px;
+  border-radius: 8px;
+}
+
+.cover-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
 .table-wrapper {
   overflow-x: auto;
 }

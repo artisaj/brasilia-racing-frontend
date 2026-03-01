@@ -11,6 +11,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { AdminPost, AdminPostsService } from '../../../core/services/admin-posts.service';
 import { AdminCategoriesService, AdminCategory } from '../../../core/services/admin-categories.service';
+import { AdminMedia, AdminMediaService } from '../../../core/services/admin-media.service';
 
 @Component({
   selector: 'app-admin-posts-page',
@@ -33,13 +34,16 @@ export class AdminPostsPageComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly postsService = inject(AdminPostsService);
   private readonly categoriesService = inject(AdminCategoriesService);
+  private readonly mediaService = inject(AdminMediaService);
 
   readonly isLoading = signal(false);
   readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly posts = signal<AdminPost[]>([]);
   readonly categories = signal<AdminCategory[]>([]);
-  readonly displayedColumns: string[] = ['id', 'title', 'category', 'status', 'author', 'created_at'];
+  readonly selectedCover = signal<AdminMedia | null>(null);
+  readonly isUploadingCover = signal(false);
+  readonly displayedColumns: string[] = ['id', 'title', 'category', 'status', 'author', 'cover', 'created_at'];
 
   readonly form = this.formBuilder.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(255)]],
@@ -47,6 +51,7 @@ export class AdminPostsPageComponent implements OnInit {
     slug: [''],
     content: ['', [Validators.required]],
     category_id: [null as number | null],
+    cover_media_id: [null as number | null],
   });
 
   ngOnInit(): void {
@@ -97,7 +102,15 @@ export class AdminPostsPageComponent implements OnInit {
       })
       .subscribe({
         next: () => {
-          this.form.reset({ title: '', subtitle: '', slug: '', content: '', category_id: null });
+          this.form.reset({
+            title: '',
+            subtitle: '',
+            slug: '',
+            content: '',
+            category_id: null,
+            cover_media_id: null,
+          });
+          this.selectedCover.set(null);
           this.isSubmitting.set(false);
           this.loadPosts();
         },
@@ -106,5 +119,30 @@ export class AdminPostsPageComponent implements OnInit {
           this.isSubmitting.set(false);
         },
       });
+  }
+
+  onCoverFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file || this.isUploadingCover()) {
+      return;
+    }
+
+    this.errorMessage.set(null);
+    this.isUploadingCover.set(true);
+
+    this.mediaService.upload(file).subscribe({
+      next: (response) => {
+        this.selectedCover.set(response.data);
+        this.form.patchValue({ cover_media_id: response.data.id });
+        this.isUploadingCover.set(false);
+        input.value = '';
+      },
+      error: () => {
+        this.errorMessage.set('Não foi possível enviar a imagem de capa.');
+        this.isUploadingCover.set(false);
+      },
+    });
   }
 }

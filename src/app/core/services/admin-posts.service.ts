@@ -15,6 +15,14 @@ export interface PostCategory {
   slug: string;
 }
 
+export interface PostCoverMedia {
+  id: number;
+  thumb_url: string;
+  card_url: string;
+  hero_url: string;
+  full_url: string;
+}
+
 export type PostStatus = 'draft' | 'in_review' | 'published' | 'scheduled';
 
 export interface AdminPost {
@@ -32,6 +40,7 @@ export interface AdminPost {
   updated_at: string;
   author?: PostAuthor;
   category?: PostCategory;
+  coverMedia?: PostCoverMedia | null;
 }
 
 interface PaginatedResponse<T> {
@@ -54,6 +63,7 @@ export interface CreatePostPayload {
   content: string;
   status?: PostStatus;
   category_id?: number | null;
+  cover_media_id?: number | null;
 }
 
 @Injectable({
