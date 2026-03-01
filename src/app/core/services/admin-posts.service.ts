@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../config/app-endpoints';
 
 export interface PostAuthor {
   id: number;
@@ -32,6 +33,8 @@ export interface AdminPost {
   slug: string;
   content: string;
   status: PostStatus;
+  is_featured: boolean;
+  featured_order: number | null;
   published_at: string | null;
   scheduled_at: string | null;
   author_id: number;
@@ -40,6 +43,7 @@ export interface AdminPost {
   updated_at: string;
   author?: PostAuthor;
   category?: PostCategory;
+  cover_media?: PostCoverMedia | null;
   coverMedia?: PostCoverMedia | null;
 }
 
@@ -66,21 +70,73 @@ export interface CreatePostPayload {
   cover_media_id?: number | null;
 }
 
+export interface UpdatePostPayload extends CreatePostPayload {}
+
+export interface ReorderFeaturedPayload {
+  post_ids: number[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AdminPostsService {
   private readonly http = inject(HttpClient);
-  private readonly apiBase = 'http://localhost:8000';
+  private readonly apiBase = API_BASE_URL;
 
-  list(): Observable<PaginatedResponse<AdminPost>> {
+  list(page = 1, perPage = 15): Observable<PaginatedResponse<AdminPost>> {
     return this.http.get<PaginatedResponse<AdminPost>>(`${this.apiBase}/api/admin/posts`, {
+      params: {
+        page,
+        per_page: perPage,
+      },
       withCredentials: true,
     });
   }
 
   create(payload: CreatePostPayload): Observable<ApiResponse<AdminPost>> {
     return this.http.post<ApiResponse<AdminPost>>(`${this.apiBase}/api/admin/posts`, payload, {
+      withCredentials: true,
+    });
+  }
+
+  show(postId: number): Observable<ApiResponse<AdminPost>> {
+    return this.http.get<ApiResponse<AdminPost>>(`${this.apiBase}/api/admin/posts/${postId}`, {
+      withCredentials: true,
+    });
+  }
+
+  update(postId: number, payload: UpdatePostPayload): Observable<ApiResponse<AdminPost>> {
+    return this.http.put<ApiResponse<AdminPost>>(`${this.apiBase}/api/admin/posts/${postId}`, payload, {
+      withCredentials: true,
+    });
+  }
+
+  remove(postId: number): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.apiBase}/api/admin/posts/${postId}`, {
+      withCredentials: true,
+    });
+  }
+
+  feature(postId: number): Observable<ApiResponse<AdminPost>> {
+    return this.http.post<ApiResponse<AdminPost>>(`${this.apiBase}/api/admin/posts/${postId}/feature`, {}, {
+      withCredentials: true,
+    });
+  }
+
+  listFeatured(): Observable<ApiResponse<AdminPost[]>> {
+    return this.http.get<ApiResponse<AdminPost[]>>(`${this.apiBase}/api/admin/posts/featured/list`, {
+      withCredentials: true,
+    });
+  }
+
+  reorderFeatured(payload: ReorderFeaturedPayload): Observable<ApiResponse<AdminPost[]>> {
+    return this.http.post<ApiResponse<AdminPost[]>>(`${this.apiBase}/api/admin/posts/featured/reorder`, payload, {
+      withCredentials: true,
+    });
+  }
+
+  unfeature(postId: number): Observable<ApiResponse<AdminPost>> {
+    return this.http.post<ApiResponse<AdminPost>>(`${this.apiBase}/api/admin/posts/${postId}/unfeature`, {}, {
       withCredentials: true,
     });
   }

@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../config/app-endpoints';
 
 export interface AdminAuditLog {
   id: number;
@@ -42,7 +43,7 @@ export interface AuditLogFilters {
 @Injectable({ providedIn: 'root' })
 export class AdminAuditLogsService {
   private readonly http = inject(HttpClient);
-  private readonly apiBase = 'http://localhost:8000';
+  private readonly apiBase = API_BASE_URL;
 
   list(filters: AuditLogFilters): Observable<PaginatedResponse<AdminAuditLog>> {
     let params = new HttpParams().set('per_page', String(filters.per_page ?? 30));

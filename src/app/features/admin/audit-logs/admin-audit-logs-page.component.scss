@@ -1,10 +1,5 @@
-.audit-logs-container {
-  padding: 24px;
-
-  mat-card {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+:host {
+  display: block;
 }
 
 .filters-form {
@@ -24,10 +19,6 @@
   gap: 8px;
 }
 
-.table-wrapper {
-  overflow-x: auto;
-}
-
 .pagination-summary {
   display: flex;
   justify-content: space-between;
@@ -44,15 +35,6 @@
   justify-content: flex-end;
   gap: 8px;
   margin-top: 12px;
-}
-
-table {
-  width: 100%;
-}
-
-.error-text {
-  color: #b3261e;
-  margin: 0;
 }
 
 @media (max-width: 900px) {

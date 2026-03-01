@@ -1,0 +1,60 @@
+<app-public-topbar></app-public-topbar>
+
+<main class="home-container">
+  @if (isLoading()) {
+    <mat-card>
+      <mat-card-content>
+        <p>Carregando notícias da categoria...</p>
+      </mat-card-content>
+    </mat-card>
+  } @else if (errorMessage()) {
+    <mat-card>
+      <mat-card-content>
+        <p class="error-text">{{ errorMessage() }}</p>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    <div class="content-shell">
+      <section class="section-heading">
+        <h3>{{ category()?.name || 'Categoria' }}</h3>
+        <p class="muted">Notícias filtradas por categoria</p>
+      </section>
+
+      <section class="highlights-grid">
+        @if (posts().length === 0) {
+          <mat-card>
+            <mat-card-content>
+              <p class="empty-content">Nenhum conteúdo nessa categoria até o momento</p>
+            </mat-card-content>
+          </mat-card>
+        } @else {
+          @for (post of posts(); track post.id) {
+            <a class="post-card-link" [routerLink]="['/noticias', post.slug]" [attr.aria-label]="'Abrir notícia ' + post.title">
+              <mat-card>
+                @if (post.cover_media?.card_url; as cardUrl) {
+                  <img [src]="cardUrl" [alt]="post.title" class="post-cover" />
+                }
+
+                <mat-card-header>
+                  <mat-card-title>{{ post.title }}</mat-card-title>
+                  <mat-card-subtitle>
+                    {{ post.category?.name || 'Sem categoria' }}
+                    @if (post.published_at) {
+                      • {{ post.published_at | date: 'dd/MM/yyyy' }}
+                    }
+                  </mat-card-subtitle>
+                </mat-card-header>
+
+                @if (post.subtitle) {
+                  <mat-card-content>
+                    <p class="muted">{{ post.subtitle }}</p>
+                  </mat-card-content>
+                }
+              </mat-card>
+            </a>
+          }
+        }
+      </section>
+    </div>
+  }
+</main>

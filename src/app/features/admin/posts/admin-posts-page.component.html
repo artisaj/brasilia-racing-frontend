@@ -1,73 +1,23 @@
-<mat-toolbar color="primary">Brasília Racing Admin</mat-toolbar>
+<app-admin-shell
+  title="Notícias"
+  subtitle="Listagem paginada das publicações com destaque editorial."
+>
+  <a shell-top-actions mat-stroked-button routerLink="/">Site público</a>
+  <a shell-header-actions mat-flat-button color="primary" routerLink="/admin/posts/new">Nova publicação</a>
 
-<main class="posts-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Notícias</mat-card-title>
-      <mat-card-subtitle>Criação e listagem inicial do módulo</mat-card-subtitle>
-    </mat-card-header>
-
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="submit()" class="post-form">
-        <mat-form-field appearance="outline">
-          <mat-label>Título</mat-label>
-          <input matInput type="text" formControlName="title" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Subtítulo</mat-label>
-          <input matInput type="text" formControlName="subtitle" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Slug (opcional)</mat-label>
-          <input matInput type="text" formControlName="slug" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="content-field">
-          <mat-label>Conteúdo</mat-label>
-          <textarea matInput rows="6" formControlName="content"></textarea>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Categoria</mat-label>
-          <mat-select formControlName="category_id">
-            <mat-option [value]="null">Sem categoria</mat-option>
-            @for (category of categories(); track category.id) {
-              <mat-option [value]="category.id">{{ category.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
-        <div class="cover-upload">
-          <label for="coverFile">Imagem de capa</label>
-          <input id="coverFile" type="file" accept="image/*" (change)="onCoverFileSelected($event)" />
-
-          @if (isUploadingCover()) {
-            <p>Enviando capa...</p>
-          }
-
-          @if (selectedCover(); as cover) {
-            <img [src]="'http://localhost:8000' + cover.card_url" alt="Prévia da capa" class="cover-preview" />
-          }
-        </div>
-
+  <section class="page-grid">
+    <mat-card class="panel-card">
+      <mat-card-content>
         @if (errorMessage()) {
           <p class="error-text">{{ errorMessage() }}</p>
         }
 
-        <button mat-flat-button color="primary" type="submit" [disabled]="isSubmitting()">
-          {{ isSubmitting() ? 'Salvando...' : 'Criar notícia' }}
-        </button>
-      </form>
-    </mat-card-content>
-
-    <mat-card-content>
-      @if (isLoading()) {
-        <p>Carregando notícias...</p>
-      } @else {
-        <div class="table-wrapper">
-          <table mat-table [dataSource]="posts()" class="mat-elevation-z1">
+        @if (isLoading()) {
+          <p>Carregando notícias...</p>
+        } @else {
+          <div class="table-shell">
+            <div class="table-scroll">
+              <table mat-table [dataSource]="posts()" class="data-table">
             <ng-container matColumnDef="id">
               <th mat-header-cell *matHeaderCellDef>ID</th>
               <td mat-cell *matCellDef="let post">{{ post.id }}</td>
@@ -78,9 +28,20 @@
               <td mat-cell *matCellDef="let post">{{ post.title }}</td>
             </ng-container>
 
+            <ng-container matColumnDef="featured">
+              <th mat-header-cell *matHeaderCellDef>Destaque</th>
+              <td mat-cell *matCellDef="let post">
+                @if (post.is_featured) {
+                  <span class="status-pill featured-pill">Ativo</span>
+                } @else {
+                  <span class="muted">-</span>
+                }
+              </td>
+            </ng-container>
+
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef>Status</th>
-              <td mat-cell *matCellDef="let post">{{ post.status }}</td>
+              <td mat-cell *matCellDef="let post"><span class="status-pill">{{ post.status }}</span></td>
             </ng-container>
 
             <ng-container matColumnDef="category">
@@ -98,26 +59,61 @@
               <td mat-cell *matCellDef="let post">{{ post.created_at | date: 'dd/MM/yyyy HH:mm' }}</td>
             </ng-container>
 
-            <ng-container matColumnDef="cover">
-              <th mat-header-cell *matHeaderCellDef>Capa</th>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Ações</th>
               <td mat-cell *matCellDef="let post">
-                @if (post.coverMedia?.thumb_url) {
-                  <img [src]="'http://localhost:8000' + post.coverMedia?.thumb_url" alt="Capa" class="cover-thumb" />
-                } @else {
-                  -
-                }
+                <button mat-stroked-button type="button" [matMenuTriggerFor]="actionsMenu">Ações</button>
+                <mat-menu #actionsMenu="matMenu">
+                  <a mat-menu-item [routerLink]="['/admin/posts', post.id, 'edit']">Editar</a>
+
+                  <button
+                    mat-menu-item
+                    type="button"
+                    [disabled]="post.is_featured || isHighlighting() === post.id"
+                    (click)="setFeatured(post)"
+                  >
+                    {{ isHighlighting() === post.id ? 'Aplicando destaque...' : 'Definir destaque' }}
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    type="button"
+                    [disabled]="!post.is_featured || isHighlighting() === post.id"
+                    (click)="removeFeatured(post)"
+                  >
+                    {{ isHighlighting() === post.id ? 'Removendo destaque...' : 'Remover destaque' }}
+                  </button>
+
+                  <button mat-menu-item type="button" (click)="remove(post)">Excluir</button>
+                </mat-menu>
               </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
           </table>
-        </div>
-      }
-    </mat-card-content>
+            </div>
+          </div>
 
-    <mat-card-actions>
-      <a mat-stroked-button routerLink="/admin">Voltar ao dashboard</a>
-    </mat-card-actions>
-  </mat-card>
-</main>
+          <div class="pagination-footer">
+            <span class="muted">Página {{ currentPage() }} de {{ lastPage() }} • {{ totalItems() }} itens</span>
+            <div class="actions-inline">
+              <button mat-stroked-button type="button" (click)="previousPage()" [disabled]="currentPage() <= 1">
+                Anterior
+              </button>
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="nextPage()"
+                [disabled]="currentPage() >= lastPage()"
+              >
+                Próxima
+              </button>
+            </div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+</app-admin-shell>

@@ -1,11 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
+import { AdminShellComponent } from '../shared/admin-shell.component';
 import {
   AdminComment,
   AdminCommentsService,
@@ -17,7 +17,7 @@ import {
   imports: [
     CommonModule,
     RouterLink,
-    MatToolbarModule,
+    AdminShellComponent,
     MatCardModule,
     MatButtonModule,
     MatTableModule,

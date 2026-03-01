@@ -1,0 +1,45 @@
+<app-public-topbar></app-public-topbar>
+
+<main class="content-wrap">
+  @if (isLoading()) {
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <p>Carregando notícia...</p>
+      </mat-card-content>
+    </mat-card>
+  } @else if (errorMessage()) {
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <p class="error-text">{{ errorMessage() }}</p>
+      </mat-card-content>
+    </mat-card>
+  } @else if (post(); as article) {
+    <article class="article-wrap">
+      @if (article.cover_media?.hero_url; as heroUrl) {
+        <app-image-viewer
+          [src]="heroUrl"
+          [alt]="article.title"
+          previewMaxHeight="clamp(240px, 32vw, 420px)"
+          [showOpenButton]="false"
+          openLabel="Abrir capa"
+        ></app-image-viewer>
+      }
+
+      <mat-card class="panel-card article-card">
+        <mat-card-content>
+          <p class="muted article-meta">
+            {{ article.category?.name || 'Sem categoria' }}
+            @if (article.published_at) {
+              • {{ article.published_at | date: 'dd/MM/yyyy' }}
+            }
+          </p>
+          <h1>{{ article.title }}</h1>
+          @if (article.subtitle) {
+            <p class="article-subtitle">{{ article.subtitle }}</p>
+          }
+          <div class="article-content" [innerHTML]="article.content || ''"></div>
+        </mat-card-content>
+      </mat-card>
+    </article>
+  }
+</main>

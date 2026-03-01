@@ -1,0 +1,49 @@
+.public-topbar {
+  background:
+    radial-gradient(circle at 10% 18%, color-mix(in srgb, #ff3b3b 26%, transparent), transparent 48%),
+    linear-gradient(128deg, #090a0c 0%, #0f1115 50%, #1b0b0d 100%) !important;
+  color: var(--mat-sys-on-surface) !important;
+}
+
+.brand-logo {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  font-size: clamp(1.15rem, 1.15rem + 0.25vw, 1.35rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.public-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nav-item {
+  font: var(--mat-sys-label-large);
+  text-decoration: none;
+  color: color-mix(in srgb, var(--mat-sys-on-surface) 82%, transparent);
+  padding: 2px 0;
+  border-bottom: 1px solid transparent;
+  transition: color 120ms ease, border-color 120ms ease;
+
+  &:hover {
+    color: var(--mat-sys-on-surface);
+    border-bottom-color: color-mix(in srgb, var(--mat-sys-primary) 55%, transparent);
+  }
+}
+
+.nav-item.is-active {
+  color: var(--mat-sys-on-surface);
+  border-bottom-color: var(--mat-sys-primary);
+}
+
+@media (max-width: 768px) {
+  .public-nav {
+    display: none;
+  }
+}

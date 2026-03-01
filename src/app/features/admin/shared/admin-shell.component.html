@@ -1,0 +1,47 @@
+<mat-toolbar color="primary" class="topbar">
+  <div class="topbar-content">
+    <a class="brand brand-link" routerLink="/admin" aria-label="Ir para o dashboard administrativo">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <h1 class="brand-name">Brasília Racing Admin</h1>
+    </a>
+
+    <div class="toolbar-actions">
+      <ng-content select="[shell-top-actions]"></ng-content>
+    </div>
+  </div>
+</mat-toolbar>
+
+<section class="admin-layout">
+  <aside class="admin-nav-wrap" aria-label="Navegação administrativa">
+    <nav class="admin-nav">
+      <a
+        mat-stroked-button
+        routerLink="/admin"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Dashboard
+      </a>
+      <a mat-stroked-button routerLink="/admin/posts" routerLinkActive="is-active">Notícias</a>
+      <a mat-stroked-button routerLink="/admin/categories" routerLinkActive="is-active">Categorias</a>
+      <a mat-stroked-button routerLink="/admin/comments" routerLinkActive="is-active">Comentários</a>
+      <a mat-stroked-button routerLink="/admin/sponsors" routerLinkActive="is-active">Patrocinadores</a>
+      <a mat-stroked-button routerLink="/admin/audit-logs" routerLinkActive="is-active">Auditoria</a>
+    </nav>
+  </aside>
+
+  <main class="content-wrap admin-shell-content">
+    <section class="page-header">
+      <div>
+        <h2>{{ title() }}</h2>
+        <p class="muted">{{ subtitle() }}</p>
+      </div>
+
+      <div class="toolbar-actions">
+        <ng-content select="[shell-header-actions]"></ng-content>
+      </div>
+    </section>
+
+    <ng-content></ng-content>
+  </main>
+</section>

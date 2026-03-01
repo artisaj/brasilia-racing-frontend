@@ -1,40 +1,149 @@
-<mat-toolbar color="primary">Brasília Racing</mat-toolbar>
+<app-public-topbar></app-public-topbar>
 
 <main class="home-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Base do projeto iniciada</mat-card-title>
-      <mat-card-subtitle>Frontend Angular + Material</mat-card-subtitle>
-    </mat-card-header>
+  @if (currentFeatured(); as featured) {
+    <section class="hero-carousel">
+      <section class="hero-section">
+        @if (featured.cover_media?.hero_url; as heroUrl) {
+          <img [src]="heroUrl" [alt]="featured.title" class="hero-cover" />
+        }
 
-    <mat-card-content>
-      <p>
-        Esta é a base inicial da área pública. As próximas entregas vão adicionar home de notícias,
-        categorias, busca e comentários.
-      </p>
-    </mat-card-content>
+        <div class="hero-panel">
+          <p class="hero-kicker">Notícia em destaque</p>
+          <a class="hero-title-link" [routerLink]="['/noticias', featured.slug]" [attr.aria-label]="'Abrir destaque ' + featured.title">
+            <h2>{{ featured.title }}</h2>
+          </a>
+          @if (featured.subtitle) {
+            <p>{{ featured.subtitle }}</p>
+          }
+          <p class="hero-meta">
+            {{ featured.category?.name || 'Sem categoria' }}
+            @if (featured.published_at) {
+              • {{ featured.published_at | date: 'dd/MM/yyyy' }}
+            }
+          </p>
+          <a mat-stroked-button class="hero-cta" [routerLink]="['/noticias', featured.slug]">Ler notícia</a>
+        </div>
+      </section>
 
-    <mat-card-actions>
-      <a mat-flat-button color="primary" routerLink="/admin/login">Acessar área administrativa</a>
-    </mat-card-actions>
-  </mat-card>
+      @if (featuredPosts().length > 1) {
+        <button class="hero-control hero-control-prev" type="button" (click)="previousFeatured()" aria-label="Destaque anterior">‹</button>
+        <button class="hero-control hero-control-next" type="button" (click)="nextFeatured()" aria-label="Próximo destaque">›</button>
 
-  <footer class="sponsors-footer">
-    <h3>Patrocinadores</h3>
+        <div class="hero-dots" role="tablist" aria-label="Navegação dos destaques">
+          @for (item of featuredPosts(); track item.id; let index = $index) {
+            <button
+              class="hero-dot"
+              type="button"
+              role="tab"
+              [class.is-active]="index === featuredIndex()"
+              [attr.aria-label]="'Ir para destaque ' + (index + 1)"
+              [attr.aria-selected]="index === featuredIndex()"
+              (click)="goToFeatured(index)"
+            ></button>
+          }
+        </div>
+      }
+    </section>
+  }
 
-    @if (sponsors().length === 0) {
-      <p class="empty-sponsors">Sem patrocinadores ativos no momento.</p>
-    } @else {
+  @if (latestPosts().length > 0 || posts().length > 0 || sponsors().length > 0) {
+    <div class="content-shell">
+    @if (latestPosts().length > 0) {
+      <section class="section-heading">
+        <h3>Últimas notícias</h3>
+        <p class="muted">As publicações mais recentes do portal</p>
+      </section>
+
+      <section class="highlights-grid">
+        @for (post of latestPosts(); track post.id) {
+          <a class="post-card-link" [routerLink]="['/noticias', post.slug]" [attr.aria-label]="'Abrir notícia ' + post.title">
+            <mat-card>
+              @if (post.cover_media?.card_url; as cardUrl) {
+                <img [src]="cardUrl" [alt]="post.title" class="post-cover" />
+              }
+
+              <mat-card-header>
+                <mat-card-title>{{ post.title }}</mat-card-title>
+                <mat-card-subtitle>
+                  {{ post.category?.name || 'Sem categoria' }}
+                  @if (post.published_at) {
+                    • {{ post.published_at | date: 'dd/MM/yyyy' }}
+                  }
+                </mat-card-subtitle>
+              </mat-card-header>
+
+              @if (post.subtitle) {
+                <mat-card-content>
+                  <p class="muted">{{ post.subtitle }}</p>
+                </mat-card-content>
+              }
+            </mat-card>
+          </a>
+        }
+      </section>
+    }
+
+    @if (posts().length > 0) {
+      <section class="section-heading feed-heading">
+        <h3>Notícias</h3>
+      </section>
+
+      <section class="news-feed">
+        @for (post of posts(); track post.id) {
+          <article class="feed-item">
+            @if (post.cover_media?.card_url; as cardUrl) {
+              <a [routerLink]="['/noticias', post.slug]" [attr.aria-label]="'Abrir notícia ' + post.title">
+                <img [src]="cardUrl" [alt]="post.title" class="feed-cover" />
+              </a>
+            }
+
+            <div class="feed-content">
+              <p class="feed-meta muted">
+                {{ post.category?.name || 'Sem categoria' }}
+                @if (post.published_at) {
+                  • {{ post.published_at | date: 'dd/MM/yyyy' }}
+                }
+              </p>
+
+              <a class="feed-title-link" [routerLink]="['/noticias', post.slug]">
+                <h4>{{ post.title }}</h4>
+              </a>
+
+              @if (post.subtitle) {
+                <p class="feed-subtitle">{{ post.subtitle }}</p>
+              }
+
+              <p class="feed-excerpt">{{ excerpt(post) }}</p>
+
+              @if (hasOverflow(post)) {
+                <a class="read-more-link" [routerLink]="['/noticias', post.slug]">Ler mais</a>
+              }
+            </div>
+          </article>
+        }
+      </section>
+    }
+
+  @if (sponsors().length > 0) {
+    <section class="sponsors-footer">
+      <div class="section-heading">
+        <h3>Patrocinadores</h3>
+        <p class="muted">Parceiros que impulsionam o esporte local</p>
+      </div>
+
       <div class="sponsors-grid">
         @for (sponsor of sponsors(); track sponsor.id) {
           <a class="sponsor-item" [href]="sponsor.destination_url" target="_blank" rel="noopener noreferrer">
             @if (sponsor.image?.card_url; as cardUrl) {
-              <img [src]="'http://localhost:8000' + cardUrl" [alt]="sponsor.name" />
+              <img [src]="cardUrl" [alt]="sponsor.name" />
             }
             <span>{{ sponsor.name }}</span>
           </a>
         }
       </div>
-    }
-  </footer>
+    </section>
+  }
+    </div>
+  }
 </main>

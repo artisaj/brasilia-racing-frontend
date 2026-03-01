@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AdminMedia } from './admin-media.service';
+import { API_BASE_URL } from '../config/app-endpoints';
 
 export type SponsorStatus = 'active' | 'inactive';
 
@@ -35,7 +36,7 @@ export interface CreateSponsorPayload {
 @Injectable({ providedIn: 'root' })
 export class AdminSponsorsService {
   private readonly http = inject(HttpClient);
-  private readonly apiBase = 'http://localhost:8000';
+  private readonly apiBase = API_BASE_URL;
 
   list(): Observable<ApiResponse<AdminSponsor[]>> {
     return this.http.get<ApiResponse<AdminSponsor[]>>(`${this.apiBase}/api/admin/sponsors`, {

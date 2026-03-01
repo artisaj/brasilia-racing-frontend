@@ -1,58 +1,17 @@
-.posts-container {
-  padding: 24px;
-
-  mat-card {
-    max-width: 1080px;
-    margin: 0 auto;
-  }
+:host {
+  display: block;
 }
 
-.post-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 24px;
+.featured-pill {
+  background: color-mix(in srgb, var(--mat-sys-primary-container) 80%, transparent);
+  color: var(--mat-sys-on-primary-container);
 }
 
-.content-field {
-  grid-column: 1 / -1;
-}
-
-.cover-upload {
-  grid-column: 1 / -1;
+.pagination-footer {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.cover-preview {
-  width: 220px;
-  border-radius: 8px;
-}
-
-.cover-thumb {
-  width: 64px;
-  height: 64px;
-  border-radius: 6px;
-  object-fit: cover;
-}
-
-.table-wrapper {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-}
-
-.error-text {
-  color: #b3261e;
-  margin: 0;
-  grid-column: 1 / -1;
-}
-
-@media (max-width: 768px) {
-  .post-form {
-    grid-template-columns: 1fr;
-  }
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
 }

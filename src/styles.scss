@@ -10,6 +10,7 @@ html {
   @include mat.theme(
     (
       color: (
+        theme-type: dark,
         primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
@@ -23,17 +24,303 @@ body {
   // Default the application to a light color theme. This can be changed to
   // `dark` to enable the dark color theme, or to `light dark` to defer to the
   // user's system settings.
-  color-scheme: light;
+  color-scheme: dark;
 
   // Set a default background, font and text colors for the application using
   // Angular Material's system-level CSS variables. Learn more about these
   // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--mat-sys-primary) 12%, transparent), transparent 50%),
+    radial-gradient(circle at top left, color-mix(in srgb, var(--mat-sys-tertiary) 8%, transparent), transparent 42%),
+    var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
   font: var(--mat-sys-body-medium);
 
   // Reset the user agent margin.
   margin: 0;
   height: 100%;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--mat-sys-primary) 30%, transparent);
+}
+
+a {
+  color: inherit;
+}
+
+main {
+  width: min(1440px, calc(100% - 24px));
+  margin: 34px auto 28px;
+  min-height: calc(100dvh - 96px);
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 65%, transparent);
+  background:
+    radial-gradient(circle at 10% 18%, color-mix(in srgb, #ff3b3b 26%, transparent), transparent 48%),
+    linear-gradient(128deg, #090a0c 0%, #0f1115 50%, #1b0b0d 100%) !important;
+  color: var(--mat-sys-on-surface) !important;
+}
+
+.topbar-content {
+  width: min(1440px, calc(100% - 24px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--mat-sys-primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--mat-sys-primary) 22%, transparent);
+}
+
+.brand-name {
+  margin: 0;
+  font: var(--mat-sys-title-large);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+mat-card {
+  border-radius: 16px !important;
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 62%, transparent);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--mat-sys-shadow) 12%, transparent) !important;
+}
+
+.muted {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.error-text {
+  color: var(--mat-sys-error);
+}
+
+.app-shell {
+  min-height: 100dvh;
+}
+
+.content-wrap {
+  width: min(1440px, calc(100% - 24px));
+  margin: 34px auto 28px;
+  min-height: calc(100dvh - 96px);
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  h2 {
+    margin: 0;
+    font: var(--mat-sys-headline-small);
+  }
+
+  p {
+    margin: 6px 0 0;
+  }
+}
+
+.page-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.page-grid.two {
+  grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+}
+
+.panel-card {
+  overflow: hidden;
+
+  mat-card-header {
+    padding-bottom: 6px;
+  }
+
+  mat-card-content + mat-card-content {
+    border-top: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 45%, transparent);
+    margin-top: 12px;
+    padding-top: 18px;
+  }
+}
+
+.panel-title {
+  margin: 0;
+  font: var(--mat-sys-title-large);
+}
+
+.panel-subtitle {
+  margin: 4px 0 0;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.full-span {
+  grid-column: 1 / -1;
+}
+
+.media-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px dashed color-mix(in srgb, var(--mat-sys-outline-variant) 70%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--mat-sys-surface-container-low) 78%, transparent);
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+.preview-media {
+  width: 220px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 65%, transparent);
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  .mat-mdc-header-row {
+    background: color-mix(in srgb, var(--mat-sys-surface-container-high) 75%, transparent);
+  }
+
+  .mat-mdc-row:nth-child(even) {
+    background: color-mix(in srgb, var(--mat-sys-surface-container-low) 45%, transparent);
+  }
+
+  .mat-mdc-row:hover {
+    background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+  }
+
+  .mat-mdc-header-cell,
+  .mat-mdc-cell {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+
+.table-shell {
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 65%, transparent);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.thumb-img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 65%, transparent);
+}
+
+.actions-inline {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mat-mdc-raised-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-outlined-button {
+  border-radius: 10px !important;
+}
+
+.mat-mdc-raised-button,
+.mat-mdc-unelevated-button {
+  box-shadow: none !important;
+}
+
+.mat-mdc-raised-button:hover,
+.mat-mdc-unelevated-button:hover,
+.mat-mdc-outlined-button:hover {
+  transform: translateY(-1px);
+  transition: transform 120ms ease;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--mat-sys-primary) 75%, white 25%);
+  outline-offset: 2px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font: var(--mat-sys-label-small);
+  background: color-mix(in srgb, var(--mat-sys-secondary-container) 78%, transparent);
+  color: var(--mat-sys-on-secondary-container);
+}
+
+@media (max-width: 960px) {
+  .page-grid.two {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 /* You can add global styles to this file, and also import other style files */

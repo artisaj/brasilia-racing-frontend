@@ -2,13 +2,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { AdminAuditLog, AdminAuditLogsService } from '../../../core/services/admin-audit-logs.service';
+import { AdminShellComponent } from '../shared/admin-shell.component';
 
 @Component({
   selector: 'app-admin-audit-logs-page',
@@ -16,7 +16,7 @@ import { AdminAuditLog, AdminAuditLogsService } from '../../../core/services/adm
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    MatToolbarModule,
+    AdminShellComponent,
     MatCardModule,
     MatButtonModule,
     MatTableModule,

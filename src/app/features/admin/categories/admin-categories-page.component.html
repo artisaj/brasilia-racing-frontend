@@ -1,14 +1,14 @@
-<mat-toolbar color="primary">Brasília Racing Admin</mat-toolbar>
+<app-admin-shell
+  title="Categorias"
+  subtitle="Estruture o conteúdo editorial para melhorar navegação e organização."
+>
+  <a shell-top-actions mat-stroked-button routerLink="/">Site público</a>
+  <a shell-header-actions mat-flat-button color="primary" routerLink="/admin/posts/new">Nova publicação</a>
 
-<main class="categories-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Categorias</mat-card-title>
-      <mat-card-subtitle>CRUD inicial de categorias</mat-card-subtitle>
-    </mat-card-header>
-
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="submit()" class="category-form">
+  <section class="page-grid two">
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
         <mat-form-field appearance="outline">
           <mat-label>Nome</mat-label>
           <input matInput type="text" formControlName="name" />
@@ -19,27 +19,40 @@
           <input matInput type="text" formControlName="slug" />
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="description-field">
+        <mat-form-field appearance="outline" class="full-span">
           <mat-label>Descrição</mat-label>
           <input matInput type="text" formControlName="description" />
         </mat-form-field>
 
+        <label class="inline-check">
+          <input type="checkbox" formControlName="show_in_navbar" />
+          Exibir na navbar pública
+        </label>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Ordem da navbar</mat-label>
+          <input matInput type="number" formControlName="navbar_order" min="0" max="999" />
+        </mat-form-field>
+
         @if (errorMessage()) {
-          <p class="error-text">{{ errorMessage() }}</p>
+          <p class="error-text full-span">{{ errorMessage() }}</p>
         }
 
         <button mat-flat-button color="primary" type="submit" [disabled]="isSubmitting()">
           {{ isSubmitting() ? 'Salvando...' : 'Criar categoria' }}
         </button>
       </form>
-    </mat-card-content>
+      </mat-card-content>
+    </mat-card>
 
-    <mat-card-content>
-      @if (isLoading()) {
-        <p>Carregando categorias...</p>
-      } @else {
-        <div class="table-wrapper">
-          <table mat-table [dataSource]="categories()" class="mat-elevation-z1">
+    <mat-card class="panel-card">
+      <mat-card-content>
+        @if (isLoading()) {
+          <p>Carregando categorias...</p>
+        } @else {
+          <div class="table-shell">
+            <div class="table-scroll">
+              <table mat-table [dataSource]="categories()" class="data-table">
             <ng-container matColumnDef="id">
               <th mat-header-cell *matHeaderCellDef>ID</th>
               <td mat-cell *matCellDef="let category">{{ category.id }}</td>
@@ -53,6 +66,26 @@
             <ng-container matColumnDef="slug">
               <th mat-header-cell *matHeaderCellDef>Slug</th>
               <td mat-cell *matCellDef="let category">{{ category.slug }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="navbar">
+              <th mat-header-cell *matHeaderCellDef>Navbar pública</th>
+              <td mat-cell *matCellDef="let category">
+                <div class="navbar-row-actions">
+                  <label class="inline-check">
+                    <input type="checkbox" #showInput [checked]="category.show_in_navbar" />
+                    Exibir
+                  </label>
+                  <input matInput #orderInput type="number" min="0" max="999" [value]="category.navbar_order" />
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    (click)="updateNavbar(category, showInput.checked, orderInput.value)"
+                  >
+                    Salvar
+                  </button>
+                </div>
+              </td>
             </ng-container>
 
             <ng-container matColumnDef="posts_count">
@@ -70,13 +103,14 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
           </table>
-        </div>
-      }
-    </mat-card-content>
+            </div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </section>
 
-    <mat-card-actions>
-      <a mat-stroked-button routerLink="/admin">Voltar ao dashboard</a>
-      <a mat-stroked-button routerLink="/admin/posts">Ir para notícias</a>
-    </mat-card-actions>
-  </mat-card>
-</main>
+  <section class="toolbar-actions">
+    <a mat-stroked-button routerLink="/admin/posts">Ir para notícias</a>
+  </section>
+</app-admin-shell>

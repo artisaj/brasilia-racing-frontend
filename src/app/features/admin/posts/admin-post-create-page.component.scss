@@ -1,0 +1,101 @@
+:host {
+  display: block;
+}
+
+.editor-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editor-label {
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+:host ::ng-deep .angular-editor {
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline) 55%, transparent) !important;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+:host ::ng-deep .angular-editor-toolbar {
+  border: 0 !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--mat-sys-outline) 45%, transparent) !important;
+  background: color-mix(in srgb, var(--mat-sys-surface-container-low) 82%, transparent) !important;
+}
+
+:host ::ng-deep .angular-editor-toolbar button {
+  background: color-mix(in srgb, var(--mat-sys-surface-container-high) 72%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline) 55%, transparent) !important;
+  color: var(--mat-sys-on-surface) !important;
+}
+
+:host ::ng-deep .angular-editor-toolbar button:hover,
+:host ::ng-deep .angular-editor-toolbar button:focus {
+  background: color-mix(in srgb, var(--mat-sys-surface-container-high) 92%, transparent) !important;
+}
+
+:host ::ng-deep .angular-editor-toolbar button i,
+:host ::ng-deep .angular-editor-toolbar button svg,
+:host ::ng-deep .angular-editor-toolbar button svg path {
+  color: var(--mat-sys-on-surface) !important;
+  fill: var(--mat-sys-on-surface) !important;
+}
+
+:host ::ng-deep .angular-editor-toolbar .select-heading,
+:host ::ng-deep .angular-editor-toolbar .select-font,
+:host ::ng-deep .angular-editor-toolbar .select-font-size,
+:host ::ng-deep .angular-editor-toolbar .select-custom-style,
+:host ::ng-deep .angular-editor-toolbar input[type='color'] {
+  background: color-mix(in srgb, var(--mat-sys-surface-container-high) 78%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline) 55%, transparent) !important;
+  color: var(--mat-sys-on-surface) !important;
+}
+
+:host ::ng-deep .angular-editor-textarea {
+  border: 0 !important;
+  background: color-mix(in srgb, var(--mat-sys-surface) 84%, transparent);
+  color: var(--mat-sys-on-surface);
+}
+
+.preview-card {
+  h3 {
+    margin: 0;
+    font: var(--mat-sys-headline-small);
+  }
+
+  .subtitle {
+    margin: 8px 0 14px;
+  }
+}
+
+.preview-kicker {
+  margin: 0 0 8px;
+  font: var(--mat-sys-label-large);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.preview-content {
+  margin: 14px 0 0;
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+.preview-content :where(p, ul, ol, h1, h2, h3, h4, h5, h6) {
+  margin-top: 0;
+}
+
+.preview-content :where(p, ul, ol) {
+  margin-bottom: 12px;
+}
+
+.preview-content :where(img, figure img) {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+}

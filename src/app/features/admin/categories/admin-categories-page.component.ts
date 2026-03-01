@@ -2,13 +2,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { AdminCategoriesService, AdminCategory } from '../../../core/services/admin-categories.service';
+import { AdminShellComponent } from '../shared/admin-shell.component';
 
 @Component({
   selector: 'app-admin-categories-page',
@@ -16,7 +16,7 @@ import { AdminCategoriesService, AdminCategory } from '../../../core/services/ad
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    MatToolbarModule,
+    AdminShellComponent,
     MatCardModule,
     MatButtonModule,
     MatInputModule,
@@ -34,12 +34,14 @@ export class AdminCategoriesPageComponent implements OnInit {
   readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly categories = signal<AdminCategory[]>([]);
-  readonly displayedColumns = ['id', 'name', 'slug', 'posts_count', 'actions'];
+  readonly displayedColumns = ['id', 'name', 'slug', 'navbar', 'posts_count', 'actions'];
 
   readonly form = this.formBuilder.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(255)]],
     slug: [''],
     description: ['', [Validators.maxLength(255)]],
+    show_in_navbar: [false],
+    navbar_order: [0, [Validators.min(0), Validators.max(999)]],
   });
 
   ngOnInit(): void {
@@ -73,7 +75,7 @@ export class AdminCategoriesPageComponent implements OnInit {
 
     this.categoriesService.create(this.form.getRawValue()).subscribe({
       next: () => {
-        this.form.reset({ name: '', slug: '', description: '' });
+        this.form.reset({ name: '', slug: '', description: '', show_in_navbar: false, navbar_order: 0 });
         this.isSubmitting.set(false);
         this.loadCategories();
       },
@@ -82,6 +84,29 @@ export class AdminCategoriesPageComponent implements OnInit {
         this.isSubmitting.set(false);
       },
     });
+  }
+
+  updateNavbar(category: AdminCategory, showInNavbar: boolean, navbarOrderRaw: string): void {
+    this.errorMessage.set(null);
+    const parsedOrder = Number.parseInt(navbarOrderRaw, 10);
+    const navbarOrder = Number.isNaN(parsedOrder) ? 0 : Math.min(Math.max(parsedOrder, 0), 999);
+
+    this.categoriesService
+      .update(category.id, {
+        name: category.name,
+        slug: category.slug,
+        description: category.description ?? undefined,
+        show_in_navbar: showInNavbar,
+        navbar_order: navbarOrder,
+      })
+      .subscribe({
+        next: () => {
+          this.loadCategories();
+        },
+        error: () => {
+          this.errorMessage.set('Não foi possível atualizar exibição da navbar.');
+        },
+      });
   }
 
   remove(category: AdminCategory): void {

@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../config/app-endpoints';
 
 export interface PublicSponsor {
   id: number;
@@ -23,7 +24,7 @@ interface ApiResponse<T> {
 @Injectable({ providedIn: 'root' })
 export class PublicSponsorsService {
   private readonly http = inject(HttpClient);
-  private readonly apiBase = 'http://localhost:8000';
+  private readonly apiBase = API_BASE_URL;
 
   listFooter(): Observable<ApiResponse<PublicSponsor[]>> {
     return this.http.get<ApiResponse<PublicSponsor[]>>(

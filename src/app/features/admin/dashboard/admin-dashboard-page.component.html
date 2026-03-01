@@ -1,26 +1,115 @@
-<mat-toolbar color="primary">Brasília Racing Admin</mat-toolbar>
+<app-admin-shell
+  title="Painel administrativo"
+  subtitle="Gestão de destaques da home com ordenação e curadoria editorial."
+>
+  <a shell-top-actions mat-stroked-button routerLink="/">Site público</a>
 
-<main class="dashboard-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Painel administrativo (base)</mat-card-title>
-      <mat-card-subtitle>Entrega A - Fundação técnica</mat-card-subtitle>
-    </mat-card-header>
+  <section class="page-grid">
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="section-header">
+          <div>
+            <h3>Destaques da home</h3>
+            <p class="muted">Defina quais notícias aparecem no carrossel e a ordem de exibição.</p>
+          </div>
+          <a mat-stroked-button routerLink="/admin/posts">Gerenciar notícias</a>
+        </div>
 
-    <mat-card-content>
-      <p>
-        Nesta etapa, o login administrativo e a base estrutural já estão prontos para evoluir para
-        os módulos de notícias, categorias, mídia e comentários.
-      </p>
-    </mat-card-content>
+        @if (errorMessage()) {
+          <p class="error-text">{{ errorMessage() }}</p>
+        }
 
-    <mat-card-actions>
-      <a mat-flat-button color="primary" routerLink="/admin/posts">Gerenciar notícias</a>
-      <a mat-flat-button color="primary" routerLink="/admin/categories">Gerenciar categorias</a>
-      <a mat-flat-button color="primary" routerLink="/admin/comments">Moderar comentários</a>
-      <a mat-flat-button color="primary" routerLink="/admin/sponsors">Gerenciar patrocinadores</a>
-      <a mat-flat-button color="primary" routerLink="/admin/audit-logs">Ver auditoria</a>
-      <a mat-stroked-button routerLink="/">Voltar para site público</a>
-    </mat-card-actions>
-  </mat-card>
-</main>
+        @if (isLoading()) {
+          <p>Carregando destaques...</p>
+        } @else {
+          <div class="featured-grid">
+            @for (post of featuredPosts(); track post.id; let index = $index) {
+              <article class="featured-card">
+                <button
+                  type="button"
+                  class="remove-btn"
+                  [disabled]="isSaving()"
+                  (click)="removeFromFeatured(post)"
+                  aria-label="Remover notícia do destaque"
+                >
+                  ×
+                </button>
+
+                @if (post.cover_media?.card_url; as coverUrl) {
+                  <img [src]="coverUrl" [alt]="post.title" class="featured-cover" />
+                }
+
+                <div class="featured-body">
+                  <p class="featured-position">Destaque {{ index + 1 }}</p>
+                  <h4>{{ post.title }}</h4>
+                  <p class="muted">{{ post.category?.name || 'Sem categoria' }}</p>
+                </div>
+
+                <div class="featured-actions">
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    [disabled]="index === 0 || isSaving()"
+                    (click)="moveFeatured(index, -1)"
+                  >
+                    Subir
+                  </button>
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    [disabled]="index === featuredPosts().length - 1 || isSaving()"
+                    (click)="moveFeatured(index, 1)"
+                  >
+                    Descer
+                  </button>
+                </div>
+              </article>
+            }
+
+            <button type="button" class="add-card" [disabled]="isSaving()" (click)="openAddModal()" aria-label="Adicionar notícia aos destaques">
+              <span>+</span>
+              <p>Adicionar destaque</p>
+            </button>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  @if (isModalOpen()) {
+    <div class="modal-backdrop" (click)="closeAddModal()">
+      <section class="modal-panel" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+          <div>
+            <h3>Adicionar notícia aos destaques</h3>
+            <p class="muted">Selecione uma notícia publicada para incluir no carrossel.</p>
+          </div>
+          <button mat-stroked-button type="button" (click)="closeAddModal()">Fechar</button>
+        </header>
+
+        <div class="modal-grid">
+          @if (availablePosts().length === 0) {
+            <p class="muted">Nenhuma notícia disponível para adicionar.</p>
+          } @else {
+            @for (post of availablePosts(); track post.id) {
+              <article class="available-card">
+                @if (post.cover_media?.card_url; as coverUrl) {
+                  <img [src]="coverUrl" [alt]="post.title" class="available-cover" />
+                }
+
+                <div class="available-body">
+                  <h4>{{ post.title }}</h4>
+                  <p class="muted">{{ post.category?.name || 'Sem categoria' }}</p>
+                </div>
+
+                <button mat-flat-button color="primary" type="button" [disabled]="isSaving()" (click)="addToFeatured(post)">
+                  Adicionar
+                </button>
+              </article>
+            }
+          }
+        </div>
+      </section>
+    </div>
+  }
+</app-admin-shell>

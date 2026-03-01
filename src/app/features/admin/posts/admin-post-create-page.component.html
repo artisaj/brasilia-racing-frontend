@@ -1,0 +1,96 @@
+<app-admin-shell
+  [title]="pageTitle()"
+  [subtitle]="pageSubtitle()"
+>
+  <a shell-top-actions mat-stroked-button routerLink="/">Site público</a>
+  <a shell-header-actions mat-stroked-button routerLink="/admin/posts">Voltar para notícias</a>
+
+  <section class="page-grid">
+    <mat-card class="panel-card">
+      <mat-card-content>
+        @if (isLoading()) {
+          <p>Carregando dados da publicação...</p>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Título</mat-label>
+            <input matInput type="text" formControlName="title" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Subtítulo</mat-label>
+            <input matInput type="text" formControlName="subtitle" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Slug (opcional)</mat-label>
+            <input matInput type="text" formControlName="slug" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Categoria</mat-label>
+            <mat-select formControlName="category_id">
+              <mat-option [value]="null">Sem categoria</mat-option>
+              @for (category of categories(); track category.id) {
+                <mat-option [value]="category.id">{{ category.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <div class="full-span editor-block">
+            <label class="editor-label" for="contentEditor">Conteúdo</label>
+            <angular-editor
+              id="contentEditor"
+              formControlName="content"
+              [config]="editorConfig"
+            ></angular-editor>
+          </div>
+
+          <div class="media-picker full-span">
+            <label for="coverFile">Imagem de capa</label>
+            <input id="coverFile" type="file" accept="image/*" (change)="onCoverFileSelected($event)" />
+
+            @if (isUploadingCover()) {
+              <p>Enviando capa...</p>
+            }
+
+            @if (selectedCover(); as cover) {
+              <img [src]="cover.card_url" alt="Prévia da capa" class="preview-media" />
+            }
+          </div>
+
+          @if (errorMessage()) {
+            <p class="error-text full-span">{{ errorMessage() }}</p>
+          }
+
+          <div class="actions-inline full-span">
+            <button mat-stroked-button type="button" routerLink="/admin/posts">Cancelar</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="isSubmitting()">
+              {{ isSubmitting() ? (isEditMode() ? 'Salvando...' : 'Publicando...') : (isEditMode() ? 'Salvar alterações' : 'Publicar agora') }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="panel-card preview-card">
+      <mat-card-content>
+        <p class="preview-kicker">Prévia</p>
+        <h3>{{ previewTitle() }}</h3>
+        <p class="muted subtitle">{{ previewSubtitle() }}</p>
+
+        @if (selectedCover(); as cover) {
+          <app-image-viewer
+            [src]="cover.hero_url"
+            [alt]="previewTitle()"
+            previewMaxHeight="clamp(220px, 26vw, 340px)"
+            openLabel="Abrir imagem"
+          ></app-image-viewer>
+        }
+
+        <div class="preview-content" [innerHTML]="previewContent()"></div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</app-admin-shell>

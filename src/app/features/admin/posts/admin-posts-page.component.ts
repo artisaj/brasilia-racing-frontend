@@ -1,82 +1,53 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
-import { MatSelectModule } from '@angular/material/select';
+import { MatMenuModule } from '@angular/material/menu';
 import { AdminPost, AdminPostsService } from '../../../core/services/admin-posts.service';
-import { AdminCategoriesService, AdminCategory } from '../../../core/services/admin-categories.service';
-import { AdminMedia, AdminMediaService } from '../../../core/services/admin-media.service';
+import { AdminShellComponent } from '../shared/admin-shell.component';
 
 @Component({
   selector: 'app-admin-posts-page',
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     RouterLink,
-    MatToolbarModule,
+    AdminShellComponent,
     MatCardModule,
     MatButtonModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatSelectModule,
     MatTableModule,
+    MatMenuModule,
   ],
   templateUrl: './admin-posts-page.component.html',
   styleUrl: './admin-posts-page.component.scss',
 })
 export class AdminPostsPageComponent implements OnInit {
-  private readonly formBuilder = inject(FormBuilder);
   private readonly postsService = inject(AdminPostsService);
-  private readonly categoriesService = inject(AdminCategoriesService);
-  private readonly mediaService = inject(AdminMediaService);
 
   readonly isLoading = signal(false);
-  readonly isSubmitting = signal(false);
+  readonly isHighlighting = signal<number | null>(null);
   readonly errorMessage = signal<string | null>(null);
   readonly posts = signal<AdminPost[]>([]);
-  readonly categories = signal<AdminCategory[]>([]);
-  readonly selectedCover = signal<AdminMedia | null>(null);
-  readonly isUploadingCover = signal(false);
-  readonly displayedColumns: string[] = ['id', 'title', 'category', 'status', 'author', 'cover', 'created_at'];
-
-  readonly form = this.formBuilder.nonNullable.group({
-    title: ['', [Validators.required, Validators.maxLength(255)]],
-    subtitle: ['', [Validators.maxLength(255)]],
-    slug: [''],
-    content: ['', [Validators.required]],
-    category_id: [null as number | null],
-    cover_media_id: [null as number | null],
-  });
+  readonly currentPage = signal(1);
+  readonly lastPage = signal(1);
+  readonly totalItems = signal(0);
+  readonly displayedColumns: string[] = ['id', 'title', 'featured', 'category', 'status', 'author', 'created_at', 'actions'];
 
   ngOnInit(): void {
-    this.loadCategories();
     this.loadPosts();
   }
 
-  loadCategories(): void {
-    this.categoriesService.list().subscribe({
-      next: (response) => {
-        this.categories.set(response.data);
-      },
-      error: () => {
-        this.errorMessage.set('Não foi possível carregar categorias.');
-      },
-    });
-  }
-
-  loadPosts(): void {
+  loadPosts(page = this.currentPage()): void {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.postsService.list().subscribe({
+    this.postsService.list(page, 12).subscribe({
       next: (response) => {
         this.posts.set(response.data);
+        this.currentPage.set(response.current_page);
+        this.lastPage.set(response.last_page);
+        this.totalItems.set(response.total);
         this.isLoading.set(false);
       },
       error: () => {
@@ -86,62 +57,77 @@ export class AdminPostsPageComponent implements OnInit {
     });
   }
 
-  submit(): void {
-    if (this.form.invalid || this.isSubmitting()) {
-      this.form.markAllAsTouched();
+  nextPage(): void {
+    if (this.currentPage() >= this.lastPage()) {
       return;
     }
 
-    this.errorMessage.set(null);
-    this.isSubmitting.set(true);
-
-    this.postsService
-      .create({
-        ...this.form.getRawValue(),
-        status: 'draft',
-      })
-      .subscribe({
-        next: () => {
-          this.form.reset({
-            title: '',
-            subtitle: '',
-            slug: '',
-            content: '',
-            category_id: null,
-            cover_media_id: null,
-          });
-          this.selectedCover.set(null);
-          this.isSubmitting.set(false);
-          this.loadPosts();
-        },
-        error: () => {
-          this.errorMessage.set('Não foi possível salvar a notícia.');
-          this.isSubmitting.set(false);
-        },
-      });
+    this.loadPosts(this.currentPage() + 1);
   }
 
-  onCoverFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
+  previousPage(): void {
+    if (this.currentPage() <= 1) {
+      return;
+    }
 
-    if (!file || this.isUploadingCover()) {
+    this.loadPosts(this.currentPage() - 1);
+  }
+
+  setFeatured(post: AdminPost): void {
+    if (this.isHighlighting() !== null) {
       return;
     }
 
     this.errorMessage.set(null);
-    this.isUploadingCover.set(true);
+    this.isHighlighting.set(post.id);
 
-    this.mediaService.upload(file).subscribe({
-      next: (response) => {
-        this.selectedCover.set(response.data);
-        this.form.patchValue({ cover_media_id: response.data.id });
-        this.isUploadingCover.set(false);
-        input.value = '';
+    this.postsService.feature(post.id).subscribe({
+      next: () => {
+        this.isHighlighting.set(null);
+        this.loadPosts();
       },
       error: () => {
-        this.errorMessage.set('Não foi possível enviar a imagem de capa.');
-        this.isUploadingCover.set(false);
+        this.errorMessage.set('Não foi possível definir notícia em destaque.');
+        this.isHighlighting.set(null);
+      },
+    });
+  }
+
+  removeFeatured(post: AdminPost): void {
+    if (this.isHighlighting() !== null) {
+      return;
+    }
+
+    this.errorMessage.set(null);
+    this.isHighlighting.set(post.id);
+
+    this.postsService.unfeature(post.id).subscribe({
+      next: () => {
+        this.isHighlighting.set(null);
+        this.loadPosts();
+      },
+      error: () => {
+        this.errorMessage.set('Não foi possível remover destaque da notícia.');
+        this.isHighlighting.set(null);
+      },
+    });
+  }
+
+  remove(post: AdminPost): void {
+    const confirmed = globalThis.confirm(`Excluir a notícia "${post.title}"?`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.errorMessage.set(null);
+
+    this.postsService.remove(post.id).subscribe({
+      next: () => {
+        this.loadPosts();
+      },
+      error: () => {
+        this.errorMessage.set('Não foi possível excluir a notícia.');
       },
     });
   }

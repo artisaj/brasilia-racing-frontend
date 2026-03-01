@@ -2,7 +2,6 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -10,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { AdminSponsorsService, AdminSponsor } from '../../../core/services/admin-sponsors.service';
 import { AdminMediaService, AdminMedia } from '../../../core/services/admin-media.service';
+import { AdminShellComponent } from '../shared/admin-shell.component';
 
 @Component({
   selector: 'app-admin-sponsors-page',
@@ -17,7 +17,7 @@ import { AdminMediaService, AdminMedia } from '../../../core/services/admin-medi
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    MatToolbarModule,
+    AdminShellComponent,
     MatCardModule,
     MatButtonModule,
     MatInputModule,

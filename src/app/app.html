@@ -1,1 +1,9 @@
-<router-outlet></router-outlet>
+<div class="app-shell">
+	<router-outlet></router-outlet>
+
+	@if (loadingState.isLoading()) {
+		<div class="global-loading" role="status" aria-live="polite" aria-label="Carregando conteúdo">
+			<mat-spinner diameter="48"></mat-spinner>
+		</div>
+	}
+</div>

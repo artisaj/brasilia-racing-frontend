@@ -1,0 +1,15 @@
+<mat-toolbar color="primary" class="topbar public-topbar">
+  <div class="topbar-content">
+    <div class="brand">
+      <div class="brand-logo" routerLink="/" tabindex="0" role="link" aria-label="Ir para página inicial">
+        Brasília Racing
+      </div>
+    </div>
+
+    <nav class="public-nav" aria-label="Categorias">
+      @for (category of categories(); track category.id) {
+        <a class="nav-item" [routerLink]="['/categorias', category.slug]" routerLinkActive="is-active">{{ category.name }}</a>
+      }
+    </nav>
+  </div>
+</mat-toolbar>

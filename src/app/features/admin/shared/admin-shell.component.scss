@@ -1,0 +1,69 @@
+:host {
+  display: block;
+}
+
+.brand-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.admin-layout {
+  width: 100%;
+  margin: 18px 0 0;
+  padding: 0 12px;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.admin-nav-wrap {
+  position: sticky;
+  top: 64px;
+  z-index: 15;
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 55%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--mat-sys-surface-container) 95%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 12px;
+}
+
+.admin-nav a {
+  justify-content: flex-start;
+}
+
+.admin-nav .is-active {
+  background: color-mix(in srgb, var(--mat-sys-primary) 22%, transparent);
+  border-color: color-mix(in srgb, var(--mat-sys-primary) 42%, var(--mat-sys-outline));
+}
+
+.admin-shell-content {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  min-height: auto;
+  margin-top: 0;
+}
+
+@media (max-width: 768px) {
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-nav-wrap {
+    position: static;
+    top: 56px;
+  }
+
+  .admin-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

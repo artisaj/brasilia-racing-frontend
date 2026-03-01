@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
+import { API_BASE_URL } from '../config/app-endpoints';
 
 export interface AdminUser {
   id: number;
@@ -24,7 +25,7 @@ interface LoginPayload {
 })
 export class AdminAuthService {
   private readonly http = inject(HttpClient);
-  private readonly apiBase = 'http://localhost:8000';
+  private readonly apiBase = API_BASE_URL;
 
   login(payload: LoginPayload): Observable<ApiResponse<AdminUser>> {
     return this.http

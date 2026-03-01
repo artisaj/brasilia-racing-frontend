@@ -20,6 +20,8 @@
     "@angular/material": "~21.2.0",
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
+    "@fortawesome/fontawesome-free": "^7.2.0",
+    "@kolkov/angular-editor": "^3.0.5",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

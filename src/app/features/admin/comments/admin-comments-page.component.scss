@@ -1,36 +1,18 @@
-.comments-container {
-  padding: 24px;
-
-  mat-card {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+:host {
+  display: block;
 }
 
 .filters-row {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-bottom: 8px;
 
   select {
     padding: 8px 10px;
-    border-radius: 6px;
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 70%, transparent);
+    background: var(--mat-sys-surface-container-low);
+    color: var(--mat-sys-on-surface);
   }
-}
-
-.table-wrapper {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-}
-
-.actions-row {
-  display: flex;
-  gap: 8px;
-}
-
-.error-text {
-  color: #b3261e;
 }

@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../config/app-endpoints';
 
 export type CommentStatus = 'pending' | 'approved' | 'rejected';
 
@@ -42,7 +43,7 @@ interface ApiResponse<T> {
 @Injectable({ providedIn: 'root' })
 export class AdminCommentsService {
   private readonly http = inject(HttpClient);
-  private readonly apiBase = 'http://localhost:8000';
+  private readonly apiBase = API_BASE_URL;
 
   list(status: CommentStatus): Observable<PaginatedResponse<AdminComment>> {
     return this.http.get<PaginatedResponse<AdminComment>>(

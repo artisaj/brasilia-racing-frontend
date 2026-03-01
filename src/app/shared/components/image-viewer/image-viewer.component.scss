@@ -1,0 +1,57 @@
+:host {
+  display: block;
+}
+
+.image-viewer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.image-viewer-preview-frame {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline) 55%, transparent);
+  background: color-mix(in srgb, var(--mat-sys-surface-container-low) 84%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+.image-viewer-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.image-viewer-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--mat-sys-surface) 40%, black 60%);
+  backdrop-filter: blur(4px);
+  padding: 16px;
+}
+
+.image-viewer-lightbox-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  width: min(1400px, 96vw);
+}
+
+.image-viewer-lightbox-image {
+  width: 100%;
+  max-height: calc(100dvh - 90px);
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline) 55%, transparent);
+  background: color-mix(in srgb, var(--mat-sys-surface) 84%, transparent);
+}

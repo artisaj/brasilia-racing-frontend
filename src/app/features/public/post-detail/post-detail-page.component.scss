@@ -1,0 +1,37 @@
+:host {
+  display: block;
+}
+
+.article-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.article-card h1 {
+  margin: 0;
+  font: var(--mat-sys-headline-medium);
+}
+
+.article-meta {
+  margin: 0 0 10px;
+}
+
+.article-subtitle {
+  margin: 10px 0 0;
+  font: var(--mat-sys-title-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.article-content {
+  margin: 16px 0 0;
+  line-height: 1.65;
+}
+
+.article-content :where(img, figure img) {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+}

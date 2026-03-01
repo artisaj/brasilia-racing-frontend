@@ -1,0 +1,22 @@
+<div class="image-viewer">
+  <div class="image-viewer-preview-frame" [style.height]="previewMaxHeight()" (click)="open()">
+    <img
+      class="image-viewer-preview"
+      [src]="src()"
+      [alt]="alt()"
+    />
+  </div>
+
+  @if (showOpenButton()) {
+    <button mat-stroked-button type="button" (click)="open()">{{ openLabel() }}</button>
+  }
+</div>
+
+@if (isOpen()) {
+  <div class="image-viewer-lightbox" (click)="close()" role="dialog" aria-modal="true">
+    <div class="image-viewer-lightbox-content" (click)="$event.stopPropagation()">
+      <button mat-stroked-button type="button" (click)="close()">Fechar</button>
+      <img [src]="src()" [alt]="alt()" class="image-viewer-lightbox-image" />
+    </div>
+  </div>
+}
