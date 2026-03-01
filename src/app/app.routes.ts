@@ -6,6 +6,7 @@ import { AdminPostsPageComponent } from './features/admin/posts/admin-posts-page
 import { AdminCategoriesPageComponent } from './features/admin/categories/admin-categories-page.component';
 import { AdminCommentsPageComponent } from './features/admin/comments/admin-comments-page.component';
 import { AdminSponsorsPageComponent } from './features/admin/sponsors/admin-sponsors-page.component';
+import { AdminAuditLogsPageComponent } from './features/admin/audit-logs/admin-audit-logs-page.component';
 
 export const routes: Routes = [
 	{
@@ -35,6 +36,10 @@ export const routes: Routes = [
 	{
 		path: 'admin/sponsors',
 		component: AdminSponsorsPageComponent,
+	},
+	{
+		path: 'admin/audit-logs',
+		component: AdminAuditLogsPageComponent,
 	},
 	{
 		path: '**',

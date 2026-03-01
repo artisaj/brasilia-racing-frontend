@@ -1,0 +1,44 @@
+.audit-logs-container {
+  padding: 24px;
+
+  mat-card {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+.filters-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.filters-actions,
+.error-text {
+  grid-column: 1 / -1;
+}
+
+.filters-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.error-text {
+  color: #b3261e;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .filters-form {
+    grid-template-columns: 1fr;
+  }
+}
