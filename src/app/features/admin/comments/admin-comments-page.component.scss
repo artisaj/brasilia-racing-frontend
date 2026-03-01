@@ -1,0 +1,36 @@
+.comments-container {
+  padding: 24px;
+
+  mat-card {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  select {
+    padding: 8px 10px;
+    border-radius: 6px;
+  }
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.actions-row {
+  display: flex;
+  gap: 8px;
+}
+
+.error-text {
+  color: #b3261e;
+}
