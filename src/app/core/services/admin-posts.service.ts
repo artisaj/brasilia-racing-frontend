@@ -9,6 +9,12 @@ export interface PostAuthor {
   role: 'admin' | 'redator';
 }
 
+export interface PostCategory {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 export type PostStatus = 'draft' | 'in_review' | 'published' | 'scheduled';
 
 export interface AdminPost {
@@ -25,6 +31,7 @@ export interface AdminPost {
   created_at: string;
   updated_at: string;
   author?: PostAuthor;
+  category?: PostCategory;
 }
 
 interface PaginatedResponse<T> {
@@ -46,6 +53,7 @@ export interface CreatePostPayload {
   slug?: string;
   content: string;
   status?: PostStatus;
+  category_id?: number | null;
 }
 
 @Injectable({

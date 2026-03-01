@@ -8,12 +8,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
-import { MatSelectModule } from '@angular/material/select';
-import { AdminPost, AdminPostsService } from '../../../core/services/admin-posts.service';
 import { AdminCategoriesService, AdminCategory } from '../../../core/services/admin-categories.service';
 
 @Component({
-  selector: 'app-admin-posts-page',
+  selector: 'app-admin-categories-page',
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -23,59 +21,42 @@ import { AdminCategoriesService, AdminCategory } from '../../../core/services/ad
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
-    MatSelectModule,
     MatTableModule,
   ],
-  templateUrl: './admin-posts-page.component.html',
-  styleUrl: './admin-posts-page.component.scss',
+  templateUrl: './admin-categories-page.component.html',
+  styleUrl: './admin-categories-page.component.scss',
 })
-export class AdminPostsPageComponent implements OnInit {
+export class AdminCategoriesPageComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
-  private readonly postsService = inject(AdminPostsService);
   private readonly categoriesService = inject(AdminCategoriesService);
 
   readonly isLoading = signal(false);
   readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
-  readonly posts = signal<AdminPost[]>([]);
   readonly categories = signal<AdminCategory[]>([]);
-  readonly displayedColumns: string[] = ['id', 'title', 'category', 'status', 'author', 'created_at'];
+  readonly displayedColumns = ['id', 'name', 'slug', 'posts_count', 'actions'];
 
   readonly form = this.formBuilder.nonNullable.group({
-    title: ['', [Validators.required, Validators.maxLength(255)]],
-    subtitle: ['', [Validators.maxLength(255)]],
+    name: ['', [Validators.required, Validators.maxLength(255)]],
     slug: [''],
-    content: ['', [Validators.required]],
-    category_id: [null as number | null],
+    description: ['', [Validators.maxLength(255)]],
   });
 
   ngOnInit(): void {
     this.loadCategories();
-    this.loadPosts();
   }
 
   loadCategories(): void {
-    this.categoriesService.list().subscribe({
-      next: (response) => {
-        this.categories.set(response.data);
-      },
-      error: () => {
-        this.errorMessage.set('Não foi possível carregar categorias.');
-      },
-    });
-  }
-
-  loadPosts(): void {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.postsService.list().subscribe({
+    this.categoriesService.list().subscribe({
       next: (response) => {
-        this.posts.set(response.data);
+        this.categories.set(response.data);
         this.isLoading.set(false);
       },
       error: () => {
-        this.errorMessage.set('Não foi possível carregar notícias. Faça login novamente.');
+        this.errorMessage.set('Não foi possível carregar categorias.');
         this.isLoading.set(false);
       },
     });
@@ -90,21 +71,30 @@ export class AdminPostsPageComponent implements OnInit {
     this.errorMessage.set(null);
     this.isSubmitting.set(true);
 
-    this.postsService
-      .create({
-        ...this.form.getRawValue(),
-        status: 'draft',
-      })
-      .subscribe({
-        next: () => {
-          this.form.reset({ title: '', subtitle: '', slug: '', content: '', category_id: null });
-          this.isSubmitting.set(false);
-          this.loadPosts();
-        },
-        error: () => {
-          this.errorMessage.set('Não foi possível salvar a notícia.');
-          this.isSubmitting.set(false);
-        },
-      });
+    this.categoriesService.create(this.form.getRawValue()).subscribe({
+      next: () => {
+        this.form.reset({ name: '', slug: '', description: '' });
+        this.isSubmitting.set(false);
+        this.loadCategories();
+      },
+      error: () => {
+        this.errorMessage.set('Não foi possível salvar a categoria.');
+        this.isSubmitting.set(false);
+      },
+    });
+  }
+
+  remove(category: AdminCategory): void {
+    this.errorMessage.set(null);
+
+    this.categoriesService.delete(category.id).subscribe({
+      next: () => {
+        this.loadCategories();
+      },
+      error: (error) => {
+        const message = error?.error?.message ?? 'Não foi possível remover a categoria.';
+        this.errorMessage.set(message);
+      },
+    });
   }
 }
