@@ -1,0 +1,19 @@
+.login-container {
+  padding: 24px;
+
+  mat-card {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.error-text {
+  color: #b3261e;
+  margin: 0;
+}
