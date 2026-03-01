@@ -18,4 +18,23 @@
       <a mat-flat-button color="primary" routerLink="/admin/login">Acessar área administrativa</a>
     </mat-card-actions>
   </mat-card>
+
+  <footer class="sponsors-footer">
+    <h3>Patrocinadores</h3>
+
+    @if (sponsors().length === 0) {
+      <p class="empty-sponsors">Sem patrocinadores ativos no momento.</p>
+    } @else {
+      <div class="sponsors-grid">
+        @for (sponsor of sponsors(); track sponsor.id) {
+          <a class="sponsor-item" [href]="sponsor.destination_url" target="_blank" rel="noopener noreferrer">
+            @if (sponsor.image?.card_url; as cardUrl) {
+              <img [src]="'http://localhost:8000' + cardUrl" [alt]="sponsor.name" />
+            }
+            <span>{{ sponsor.name }}</span>
+          </a>
+        }
+      </div>
+    }
+  </footer>
 </main>

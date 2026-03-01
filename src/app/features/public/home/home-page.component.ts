@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { PublicSponsor, PublicSponsorsService } from '../../../core/services/public-sponsors.service';
 
 @Component({
   selector: 'app-home-page',
@@ -10,4 +11,19 @@ import { MatButtonModule } from '@angular/material/button';
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss'
 })
-export class HomePageComponent {}
+export class HomePageComponent implements OnInit {
+  private readonly sponsorsService = inject(PublicSponsorsService);
+
+  readonly sponsors = signal<PublicSponsor[]>([]);
+
+  ngOnInit(): void {
+    this.sponsorsService.listFooter().subscribe({
+      next: (response) => {
+        this.sponsors.set(response.data);
+      },
+      error: () => {
+        this.sponsors.set([]);
+      },
+    });
+  }
+}

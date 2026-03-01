@@ -1,0 +1,95 @@
+<mat-toolbar color="primary">Brasília Racing Admin</mat-toolbar>
+
+<main class="sponsors-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Patrocinadores</mat-card-title>
+      <mat-card-subtitle>Gerenciamento de patrocinadores do rodapé</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="sponsor-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Nome</mat-label>
+          <input matInput type="text" formControlName="name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>URL de destino</mat-label>
+          <input matInput type="url" formControlName="destination_url" />
+        </mat-form-field>
+
+        <div class="image-upload">
+          <label for="sponsorImage">Imagem do patrocinador</label>
+          <input id="sponsorImage" type="file" accept="image/*" (change)="onImageSelected($event)" />
+
+          @if (isUploading()) {
+            <p>Enviando imagem...</p>
+          }
+
+          @if (selectedImage(); as image) {
+            <img [src]="'http://localhost:8000' + image.card_url" alt="Prévia do patrocinador" class="preview" />
+          }
+        </div>
+
+        @if (errorMessage()) {
+          <p class="error-text">{{ errorMessage() }}</p>
+        }
+
+        <button mat-flat-button color="primary" type="submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Salvando...' : 'Criar patrocinador' }}
+        </button>
+      </form>
+    </mat-card-content>
+
+    <mat-card-content>
+      @if (isLoading()) {
+        <p>Carregando patrocinadores...</p>
+      } @else {
+        <div class="table-wrapper">
+          <table mat-table [dataSource]="sponsors()" class="mat-elevation-z1">
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <td mat-cell *matCellDef="let sponsor">{{ sponsor.id }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Nome</th>
+              <td mat-cell *matCellDef="let sponsor">{{ sponsor.name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let sponsor">{{ sponsor.status }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="image">
+              <th mat-header-cell *matHeaderCellDef>Imagem</th>
+              <td mat-cell *matCellDef="let sponsor">
+                @if (sponsor.image?.thumb_url) {
+                  <img [src]="'http://localhost:8000' + sponsor.image?.thumb_url" alt="Patrocinador" class="thumb" />
+                } @else {
+                  -
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Ações</th>
+              <td mat-cell *matCellDef="let sponsor">
+                <button mat-stroked-button color="warn" type="button" (click)="remove(sponsor)">Excluir</button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </div>
+      }
+    </mat-card-content>
+
+    <mat-card-actions>
+      <a mat-stroked-button routerLink="/admin">Voltar ao dashboard</a>
+    </mat-card-actions>
+  </mat-card>
+</main>

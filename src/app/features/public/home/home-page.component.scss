@@ -6,3 +6,48 @@
     margin: 0 auto;
   }
 }
+
+.sponsors-footer {
+  max-width: 1080px;
+  margin: 40px auto 0;
+  padding: 16px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+
+  h3 {
+    margin: 0 0 12px;
+  }
+}
+
+.empty-sponsors {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.sponsors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.sponsor-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+  padding: 12px;
+
+  img {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  span {
+    font-size: 14px;
+    text-align: center;
+  }
+}

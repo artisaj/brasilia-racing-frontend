@@ -5,6 +5,7 @@ import { AdminDashboardPageComponent } from './features/admin/dashboard/admin-da
 import { AdminPostsPageComponent } from './features/admin/posts/admin-posts-page.component';
 import { AdminCategoriesPageComponent } from './features/admin/categories/admin-categories-page.component';
 import { AdminCommentsPageComponent } from './features/admin/comments/admin-comments-page.component';
+import { AdminSponsorsPageComponent } from './features/admin/sponsors/admin-sponsors-page.component';
 
 export const routes: Routes = [
 	{
@@ -30,6 +31,10 @@ export const routes: Routes = [
 	{
 		path: 'admin/comments',
 		component: AdminCommentsPageComponent,
+	},
+	{
+		path: 'admin/sponsors',
+		component: AdminSponsorsPageComponent,
 	},
 	{
 		path: '**',

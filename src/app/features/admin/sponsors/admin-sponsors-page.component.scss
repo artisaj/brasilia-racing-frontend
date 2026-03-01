@@ -1,0 +1,57 @@
+.sponsors-container {
+  padding: 24px;
+
+  mat-card {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+}
+
+.sponsor-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.image-upload,
+.error-text {
+  grid-column: 1 / -1;
+}
+
+.image-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preview {
+  width: 220px;
+  border-radius: 8px;
+}
+
+.thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.error-text {
+  color: #b3261e;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .sponsor-form {
+    grid-template-columns: 1fr;
+  }
+}
