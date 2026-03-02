@@ -22,6 +22,9 @@ export interface PublicPost {
     hero_url: string;
     full_url: string;
   };
+  cover_focus_x?: number;
+  cover_focus_y?: number;
+  cover_zoom?: number;
 }
 
 interface PaginatedResponse<T> {

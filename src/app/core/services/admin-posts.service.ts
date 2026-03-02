@@ -45,6 +45,9 @@ export interface AdminPost {
   category?: PostCategory;
   cover_media?: PostCoverMedia | null;
   coverMedia?: PostCoverMedia | null;
+  cover_focus_x?: number;
+  cover_focus_y?: number;
+  cover_zoom?: number;
 }
 
 interface PaginatedResponse<T> {
@@ -74,6 +77,12 @@ export interface UpdatePostPayload extends CreatePostPayload {}
 
 export interface ReorderFeaturedPayload {
   post_ids: number[];
+}
+
+export interface FeaturePostPayload {
+  cover_focus_x?: number;
+  cover_focus_y?: number;
+  cover_zoom?: number;
 }
 
 @Injectable({
@@ -117,8 +126,8 @@ export class AdminPostsService {
     });
   }
 
-  feature(postId: number): Observable<ApiResponse<AdminPost>> {
-    return this.http.post<ApiResponse<AdminPost>>(`${this.apiBase}/api/admin/posts/${postId}/feature`, {}, {
+  feature(postId: number, payload: FeaturePostPayload = {}): Observable<ApiResponse<AdminPost>> {
+    return this.http.post<ApiResponse<AdminPost>>(`${this.apiBase}/api/admin/posts/${postId}/feature`, payload, {
       withCredentials: true,
     });
   }

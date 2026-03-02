@@ -11,14 +11,18 @@
 }
 
 .brand-logo {
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
-  font-size: clamp(1.15rem, 1.15rem + 0.25vw, 1.35rem);
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.brand-logo-image {
+  display: block;
+  height: clamp(34px, 4.2vw, 44px);
+  width: auto;
 }
 
 .public-nav {

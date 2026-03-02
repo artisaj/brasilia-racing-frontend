@@ -52,6 +52,39 @@
   margin-top: 0;
 }
 
+.profile-menu-trigger {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  min-width: 0;
+  height: 36px;
+  padding: 0 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.avatar-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  line-height: 1;
+}
+
+.avatar-wrapper .mat-icon {
+  width: 22px;
+  height: 22px;
+  font-size: 22px;
+}
+
+.avatar-wrapper .arrow-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}
+
 @media (max-width: 768px) {
   .admin-layout {
     grid-template-columns: 1fr;

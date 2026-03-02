@@ -5,7 +5,14 @@
     <section class="hero-carousel">
       <section class="hero-section">
         @if (featured.cover_media?.hero_url; as heroUrl) {
-          <img [src]="heroUrl" [alt]="featured.title" class="hero-cover" />
+          <img
+            [src]="heroUrl"
+            [alt]="featured.title"
+            class="hero-cover"
+            [style.object-position]="(featured.cover_focus_x ?? 50) + '% ' + (featured.cover_focus_y ?? 50) + '%'"
+            [style.transform]="'scale(' + (featured.cover_zoom ?? 1) + ')'"
+            [style.transform-origin]="(featured.cover_focus_x ?? 50) + '% ' + (featured.cover_focus_y ?? 50) + '%'"
+          />
         }
 
         <div class="hero-panel">

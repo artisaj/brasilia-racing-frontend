@@ -1,0 +1,64 @@
+<app-admin-shell
+  title="Perfil"
+  subtitle="Atualize sua senha de acesso administrativo com segurança."
+>
+  <a shell-top-actions mat-stroked-button href="/" target="_blank" rel="noopener noreferrer"
+    >Site público <span aria-hidden="true">↗</span></a
+  >
+
+  <section class="page-grid two">
+    <mat-card class="panel-card">
+      <mat-card-header>
+        <mat-card-title>Minha conta</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (isLoadingProfile()) {
+          <p>Carregando perfil...</p>
+        } @else if (profile(); as me) {
+          <p><strong>Nome:</strong> {{ me.name }}</p>
+          <p><strong>Email:</strong> {{ me.email }}</p>
+          <p><strong>Perfil:</strong> {{ me.role }}</p>
+          <p><strong>Status:</strong> {{ me.status }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="panel-card">
+      <mat-card-header>
+        <mat-card-title>Alterar senha</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="updatePassword()" class="form-stack">
+          <mat-form-field appearance="outline">
+            <mat-label>Senha atual</mat-label>
+            <input matInput type="password" formControlName="current_password" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nova senha</mat-label>
+            <input matInput type="password" formControlName="password" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Confirmar nova senha</mat-label>
+            <input matInput type="password" formControlName="password_confirmation" />
+          </mat-form-field>
+
+          @if (errorMessage()) {
+            <p class="error-text">{{ errorMessage() }}</p>
+          }
+
+          @if (successMessage()) {
+            <p class="success-text">{{ successMessage() }}</p>
+          }
+
+          <button mat-flat-button color="primary" type="submit" [disabled]="isSubmitting()">
+            {{ isSubmitting() ? 'Salvando...' : 'Atualizar senha' }}
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</app-admin-shell>

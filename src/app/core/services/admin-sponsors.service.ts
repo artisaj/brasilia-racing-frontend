@@ -50,6 +50,12 @@ export class AdminSponsorsService {
     });
   }
 
+  update(sponsorId: number, payload: CreateSponsorPayload): Observable<ApiResponse<AdminSponsor>> {
+    return this.http.put<ApiResponse<AdminSponsor>>(`${this.apiBase}/api/admin/sponsors/${sponsorId}`, payload, {
+      withCredentials: true,
+    });
+  }
+
   remove(sponsorId: number): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.apiBase}/api/admin/sponsors/${sponsorId}`, {
       withCredentials: true,

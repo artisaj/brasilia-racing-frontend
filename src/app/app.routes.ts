@@ -10,6 +10,8 @@ import { AdminCategoriesPageComponent } from './features/admin/categories/admin-
 import { AdminCommentsPageComponent } from './features/admin/comments/admin-comments-page.component';
 import { AdminSponsorsPageComponent } from './features/admin/sponsors/admin-sponsors-page.component';
 import { AdminAuditLogsPageComponent } from './features/admin/audit-logs/admin-audit-logs-page.component';
+import { AdminUsersPageComponent } from './features/admin/users/admin-users-page.component';
+import { AdminProfilePageComponent } from './features/admin/profile/admin-profile-page.component';
 import { adminSurfaceGuard, publicSurfaceGuard } from './core/guards/host-surface.guard';
 import { adminAuthGuard } from './core/guards/admin-auth.guard';
 
@@ -79,6 +81,18 @@ export const routes: Routes = [
 	{
 		path: 'admin/audit-logs',
 		component: AdminAuditLogsPageComponent,
+		canMatch: [adminSurfaceGuard],
+		canActivate: [adminAuthGuard],
+	},
+	{
+		path: 'admin/users',
+		component: AdminUsersPageComponent,
+		canMatch: [adminSurfaceGuard],
+		canActivate: [adminAuthGuard],
+	},
+	{
+		path: 'admin/profile',
+		component: AdminProfilePageComponent,
 		canMatch: [adminSurfaceGuard],
 		canActivate: [adminAuthGuard],
 	},

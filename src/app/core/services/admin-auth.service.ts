@@ -8,6 +8,7 @@ export interface AdminUser {
   name: string;
   email: string;
   role: 'admin' | 'redator';
+  status: 'pending' | 'active' | 'inactive';
 }
 
 interface ApiResponse<T> {

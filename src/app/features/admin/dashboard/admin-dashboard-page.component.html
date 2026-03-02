@@ -2,7 +2,9 @@
   title="Painel administrativo"
   subtitle="Gestão de destaques da home com ordenação e curadoria editorial."
 >
-  <a shell-top-actions mat-stroked-button routerLink="/">Site público</a>
+  <a shell-top-actions mat-stroked-button href="/" target="_blank" rel="noopener noreferrer"
+    >Site público <span aria-hidden="true">↗</span></a
+  >
 
   <section class="page-grid">
     <mat-card class="panel-card">
@@ -36,7 +38,14 @@
                 </button>
 
                 @if (post.cover_media?.card_url; as coverUrl) {
-                  <img [src]="coverUrl" [alt]="post.title" class="featured-cover" />
+                  <img
+                    [src]="coverUrl"
+                    [alt]="post.title"
+                    class="featured-cover"
+                    [style.object-position]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
+                    [style.transform]="'scale(' + (post.cover_zoom ?? 1) + ')'"
+                    [style.transform-origin]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
+                  />
                 }
 
                 <div class="featured-body">
@@ -51,25 +60,38 @@
                     type="button"
                     [disabled]="index === 0 || isSaving()"
                     (click)="moveFeatured(index, -1)"
+                    aria-label="Mover destaque para esquerda"
                   >
-                    Esquerda
+                    &lt;
                   </button>
                   <button
                     mat-stroked-button
                     type="button"
                     [disabled]="index === featuredPosts().length - 1 || isSaving()"
                     (click)="moveFeatured(index, 1)"
+                    aria-label="Mover destaque para direita"
                   >
-                    Direita
+                    &gt;
+                  </button>
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    class="featured-edit-btn"
+                    [disabled]="isSaving()"
+                    (click)="openFeaturedEditor(post)"
+                  >
+                    Editar enquadramento
                   </button>
                 </div>
               </article>
             }
 
-            <button type="button" class="add-card" [disabled]="isSaving()" (click)="openAddModal()" aria-label="Adicionar notícia aos destaques">
-              <span>+</span>
-              <p>Adicionar destaque</p>
-            </button>
+            @if (canAddFeatured()) {
+              <button type="button" class="add-card" [disabled]="isSaving()" (click)="openAddModal()" aria-label="Adicionar notícia aos destaques">
+                <span>+</span>
+                <p>Adicionar destaque</p>
+              </button>
+            }
           </div>
         }
       </mat-card-content>
@@ -81,31 +103,109 @@
       <section class="modal-panel" (click)="$event.stopPropagation()">
         <header class="modal-header">
           <div>
-            <h3>Adicionar notícia aos destaques</h3>
-            <p class="muted">Selecione uma notícia publicada para incluir no carrossel.</p>
+            <h3>
+              {{ selectedPostForFeatured()
+                ? (isEditingFeatured() ? 'Editar enquadramento do destaque' : 'Ajustar enquadramento do destaque')
+                : 'Adicionar notícia aos destaques' }}
+            </h3>
+            <p class="muted">
+              {{ selectedPostForFeatured()
+                ? 'Arraste para posicionar e ajuste o zoom exatamente como ficará no destaque.'
+                : 'Selecione uma notícia publicada para incluir no carrossel.' }}
+            </p>
           </div>
           <button mat-stroked-button type="button" (click)="closeAddModal()">Fechar</button>
         </header>
 
         <div class="modal-grid">
-          @if (availablePosts().length === 0) {
-            <p class="muted">Nenhuma notícia disponível para adicionar.</p>
-          } @else {
-            @for (post of availablePosts(); track post.id) {
-              <article class="available-card">
-                @if (post.cover_media?.card_url; as coverUrl) {
-                  <img [src]="coverUrl" [alt]="post.title" class="available-cover" />
-                }
+          @if (selectedPostForFeatured(); as selectedPost) {
+            <section class="highlight-editor">
+              <div class="highlight-preview-wrap">
+                <div
+                  class="highlight-preview"
+                  (pointerdown)="startCoverDrag($event)"
+                  (pointermove)="onCoverDrag($event)"
+                  (pointerup)="endCoverDrag($event)"
+                  (pointercancel)="endCoverDrag($event)"
+                  (pointerleave)="endCoverDrag($event)"
+                >
+                  @if (selectedPost.cover_media?.hero_url; as heroUrl) {
+                    <img
+                      [src]="heroUrl"
+                      [alt]="selectedPost.title"
+                      class="highlight-preview-image"
+                      [style.object-position]="coverObjectPosition()"
+                      [style.transform]="coverTransform()"
+                      [style.transform-origin]="coverObjectPosition()"
+                      draggable="false"
+                    />
+                  } @else {
+                    <p class="muted">A notícia não possui imagem de capa.</p>
+                  }
+                </div>
+                <p class="muted">Prévia com a proporção do destaque da home.</p>
+              </div>
 
-                <div class="available-body">
-                  <h4>{{ post.title }}</h4>
-                  <p class="muted">{{ post.category?.name || 'Sem categoria' }}</p>
+              <div class="highlight-editor-body">
+                <h4>{{ selectedPost.title }}</h4>
+                <p class="muted">{{ selectedPost.category?.name || 'Sem categoria' }}</p>
+
+                <div class="zoom-control">
+                  <label for="coverZoom">Zoom da imagem</label>
+                  <input
+                    id="coverZoom"
+                    type="range"
+                    min="0.5"
+                    max="2"
+                    step="0.01"
+                    [value]="coverZoom()"
+                    (input)="adjustCoverZoom($event)"
+                  />
+                  <p class="muted">{{ (coverZoom() * 100).toFixed(0) }}%</p>
                 </div>
 
-                <button mat-flat-button color="primary" type="button" [disabled]="isSaving()" (click)="addToFeatured(post)">
-                  Adicionar
-                </button>
-              </article>
+                <div class="highlight-editor-actions">
+                  <button mat-stroked-button type="button" (click)="exitFeatureSetup()" [disabled]="isSaving()">
+                    {{ isEditingFeatured() ? 'Fechar' : 'Trocar notícia' }}
+                  </button>
+                  <button mat-stroked-button type="button" (click)="resetCoverPosition()" [disabled]="isSaving()">
+                    Resetar posição e zoom
+                  </button>
+                  <button mat-flat-button color="primary" type="button" [disabled]="isSaving()" (click)="addToFeatured()">
+                    {{ isSaving()
+                      ? (isEditingFeatured() ? 'Salvando...' : 'Adicionando...')
+                      : (isEditingFeatured() ? 'Salvar enquadramento' : 'Adicionar destaque') }}
+                  </button>
+                </div>
+              </div>
+            </section>
+          } @else {
+            @if (availablePosts().length === 0) {
+              <p class="muted">Nenhuma notícia disponível para adicionar.</p>
+            } @else {
+              @for (post of availablePosts(); track post.id) {
+                <article class="available-card">
+                  @if (post.cover_media?.card_url; as coverUrl) {
+                    <img
+                      [src]="coverUrl"
+                      [alt]="post.title"
+                      class="available-cover"
+                      [style.object-position]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
+                      [style.transform]="'scale(' + (post.cover_zoom ?? 1) + ')'"
+                      [style.transform-origin]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
+                    />
+                  }
+
+                  <div class="available-body">
+                    <h4>{{ post.title }}</h4>
+                    <p class="muted">{{ post.category?.name || 'Sem categoria' }}</p>
+                  </div>
+
+                  <button mat-flat-button color="primary" type="button" [disabled]="isSaving()" (click)="startFeatureSetup(post)">
+                    Ajustar e adicionar
+                  </button>
+                </article>
+              }
             }
           }
         </div>

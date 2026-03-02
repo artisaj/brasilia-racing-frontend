@@ -2,7 +2,9 @@
   [title]="pageTitle()"
   [subtitle]="pageSubtitle()"
 >
-  <a shell-top-actions mat-stroked-button routerLink="/">Site público</a>
+  <a shell-top-actions mat-stroked-button href="/" target="_blank" rel="noopener noreferrer"
+    >Site público <span aria-hidden="true">↗</span></a
+  >
   <a shell-header-actions mat-stroked-button routerLink="/admin/posts">Voltar para notícias</a>
 
   <section class="page-grid">

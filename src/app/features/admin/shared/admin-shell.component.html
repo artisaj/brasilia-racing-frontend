@@ -7,7 +7,29 @@
 
     <div class="toolbar-actions">
       <ng-content select="[shell-top-actions]"></ng-content>
-      <button mat-stroked-button type="button" (click)="logout()">Sair</button>
+
+      <button
+        type="button"
+        class="profile-menu-trigger"
+        [matMenuTriggerFor]="profileMenu"
+        aria-label="Abrir menu de perfil"
+      >
+        <span class="avatar-wrapper" aria-hidden="true">
+          <mat-icon>account_circle</mat-icon>
+          <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+        </span>
+      </button>
+
+      <mat-menu #profileMenu="matMenu" xPosition="before">
+        <button mat-menu-item routerLink="/admin/profile" type="button">
+          <mat-icon>person</mat-icon>
+          <span>Perfil</span>
+        </button>
+        <button mat-menu-item type="button" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Sair</span>
+        </button>
+      </mat-menu>
     </div>
   </div>
 </mat-toolbar>
@@ -27,6 +49,7 @@
       <a mat-stroked-button routerLink="/admin/categories" routerLinkActive="is-active">Categorias</a>
       <a mat-stroked-button routerLink="/admin/comments" routerLinkActive="is-active">Comentários</a>
       <a mat-stroked-button routerLink="/admin/sponsors" routerLinkActive="is-active">Patrocinadores</a>
+      <a mat-stroked-button routerLink="/admin/users" routerLinkActive="is-active">Usuários</a>
       <a mat-stroked-button routerLink="/admin/audit-logs" routerLinkActive="is-active">Auditoria</a>
     </nav>
   </aside>
