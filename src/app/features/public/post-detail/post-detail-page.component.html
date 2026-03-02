@@ -40,6 +40,66 @@
           <div class="article-content" [innerHTML]="article.content || ''"></div>
         </mat-card-content>
       </mat-card>
+
+      <mat-card class="panel-card comments-panel">
+        <mat-card-content>
+          <section class="comments-section">
+            <h3 class="comments-title">Comentários</h3>
+
+            @if (commentsLoading()) {
+              <p class="muted">Carregando comentários...</p>
+            } @else if (comments().length === 0) {
+              <p class="muted">Ainda não há comentários aprovados para esta notícia.</p>
+            } @else {
+              <div class="comments-list">
+                @for (comment of comments(); track comment.id) {
+                  <article class="comment-item">
+                    <header>
+                      <p class="comment-author">{{ comment.author_name }}</p>
+                      <p class="comment-date muted">{{ comment.created_at | date: 'dd/MM/yyyy HH:mm' }}</p>
+                    </header>
+                    <p class="comment-body">{{ comment.body }}</p>
+                  </article>
+                }
+              </div>
+            }
+
+            <hr class="comments-divider" />
+
+            <h4 class="comment-form-title">Deixe seu comentário</h4>
+            <p class="muted comment-note">Seu comentário será analisado antes de aparecer publicamente.</p>
+
+            <form [formGroup]="commentForm" (ngSubmit)="submitComment()" class="comment-form">
+              <mat-form-field appearance="outline">
+                <mat-label>Nome</mat-label>
+                <input matInput type="text" formControlName="author_name" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>E-mail</mat-label>
+                <input matInput type="email" formControlName="author_email" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Comentário</mat-label>
+                <textarea matInput rows="2" formControlName="body"></textarea>
+              </mat-form-field>
+
+              @if (commentErrorMessage()) {
+                <p class="error-text">{{ commentErrorMessage() }}</p>
+              }
+
+              @if (commentSuccessMessage()) {
+                <p class="success-text">{{ commentSuccessMessage() }}</p>
+              }
+
+              <button mat-flat-button color="primary" type="submit" [disabled]="isSubmittingComment()">
+                {{ isSubmittingComment() ? 'Enviando...' : 'Enviar comentário' }}
+              </button>
+            </form>
+          </section>
+        </mat-card-content>
+      </mat-card>
     </article>
   }
 </main>

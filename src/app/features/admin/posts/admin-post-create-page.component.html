@@ -55,6 +55,10 @@
               <p>Enviando capa...</p>
             }
 
+            @if (uploadOptimizationMessage(); as optimizationMessage) {
+              <p class="muted">{{ optimizationMessage }}</p>
+            }
+
             @if (selectedCover(); as cover) {
               <img [src]="cover.card_url" alt="Prévia da capa" class="preview-media" />
             }

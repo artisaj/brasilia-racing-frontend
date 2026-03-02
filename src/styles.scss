@@ -7,6 +7,7 @@
 
 html {
   height: 100%;
+  min-height: 100%;
   @include mat.theme(
     (
       color: (
@@ -18,6 +19,7 @@ html {
       density: 0,
     )
   );
+  background: var(--mat-sys-surface);
 }
 
 body {
@@ -38,7 +40,8 @@ body {
 
   // Reset the user agent margin.
   margin: 0;
-  height: 100%;
+  min-height: 100dvh;
+  height: auto;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }

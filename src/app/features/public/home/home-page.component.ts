@@ -82,9 +82,9 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   private syncVisiblePosts(): void {
     const featuredIds = new Set(this.featuredPosts().map((post) => post.id));
-    const visiblePosts = this.allPosts().filter((post) => !featuredIds.has(post.id));
-    this.latestPosts.set(visiblePosts.slice(0, 3));
-    this.posts.set(visiblePosts);
+    const latestVisiblePosts = this.allPosts().filter((post) => !featuredIds.has(post.id));
+    this.latestPosts.set(latestVisiblePosts.slice(0, 3));
+    this.posts.set(this.allPosts());
   }
 
   previousFeatured(): void {

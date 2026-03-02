@@ -1,7 +1,12 @@
 .public-topbar {
   background:
     radial-gradient(circle at 10% 18%, color-mix(in srgb, #ff3b3b 26%, transparent), transparent 48%),
-    linear-gradient(128deg, #090a0c 0%, #0f1115 50%, #1b0b0d 100%) !important;
+    linear-gradient(
+      128deg,
+      color-mix(in srgb, #090a0c 90%, transparent) 0%,
+      color-mix(in srgb, #0f1115 90%, transparent) 50%,
+      color-mix(in srgb, #1b0b0d 90%, transparent) 100%
+    ) !important;
   color: var(--mat-sys-on-surface) !important;
 }
 

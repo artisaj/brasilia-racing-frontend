@@ -47,44 +47,8 @@
     </section>
   }
 
-  @if (latestPosts().length > 0 || posts().length > 0 || sponsors().length > 0) {
+  @if (posts().length > 0) {
     <div class="content-shell">
-    @if (latestPosts().length > 0) {
-      <section class="section-heading">
-        <h3>Últimas notícias</h3>
-        <p class="muted">As publicações mais recentes do portal</p>
-      </section>
-
-      <section class="highlights-grid">
-        @for (post of latestPosts(); track post.id) {
-          <a class="post-card-link" [routerLink]="['/noticias', post.slug]" [attr.aria-label]="'Abrir notícia ' + post.title">
-            <mat-card>
-              @if (post.cover_media?.card_url; as cardUrl) {
-                <img [src]="cardUrl" [alt]="post.title" class="post-cover" />
-              }
-
-              <mat-card-header>
-                <mat-card-title>{{ post.title }}</mat-card-title>
-                <mat-card-subtitle>
-                  {{ post.category?.name || 'Sem categoria' }}
-                  @if (post.published_at) {
-                    • {{ post.published_at | date: 'dd/MM/yyyy' }}
-                  }
-                </mat-card-subtitle>
-              </mat-card-header>
-
-              @if (post.subtitle) {
-                <mat-card-content>
-                  <p class="muted">{{ post.subtitle }}</p>
-                </mat-card-content>
-              }
-            </mat-card>
-          </a>
-        }
-      </section>
-    }
-
-    @if (posts().length > 0) {
       <section class="section-heading feed-heading">
         <h3>Notícias</h3>
       </section>
@@ -123,27 +87,28 @@
           </article>
         }
       </section>
-    }
+
+    </div>
+  }
 
   @if (sponsors().length > 0) {
-    <section class="sponsors-footer">
-      <div class="section-heading">
-        <h3>Patrocinadores</h3>
-        <p class="muted">Parceiros que impulsionam o esporte local</p>
-      </div>
+    <section class="sponsors-shell">
+      <div class="sponsors-footer">
+        <div class="section-heading">
+          <h3>Patrocinadores</h3>
+        </div>
 
-      <div class="sponsors-grid">
-        @for (sponsor of sponsors(); track sponsor.id) {
-          <a class="sponsor-item" [href]="sponsor.destination_url" target="_blank" rel="noopener noreferrer">
-            @if (sponsor.image?.card_url; as cardUrl) {
-              <img [src]="cardUrl" [alt]="sponsor.name" />
-            }
-            <span>{{ sponsor.name }}</span>
-          </a>
-        }
+        <div class="sponsors-grid">
+          @for (sponsor of sponsors(); track sponsor.id) {
+            <a class="sponsor-item" [href]="sponsor.destination_url" target="_blank" rel="noopener noreferrer">
+              @if (sponsor.image?.card_url; as cardUrl) {
+                <img [src]="cardUrl" [alt]="sponsor.name" />
+              }
+              <span>{{ sponsor.name }}</span>
+            </a>
+          }
+        </div>
       </div>
     </section>
-  }
-    </div>
   }
 </main>

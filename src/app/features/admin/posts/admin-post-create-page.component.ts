@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { firstValueFrom } from 'rxjs';
 import { startWith } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,6 +16,7 @@ import { AdminCategoriesService, AdminCategory } from '../../../core/services/ad
 import { AdminMedia, AdminMediaService } from '../../../core/services/admin-media.service';
 import { AdminShellComponent } from '../shared/admin-shell.component';
 import { ImageViewerComponent } from '../../../shared/components/image-viewer/image-viewer.component';
+import { compressImageFile } from '../../../core/utils/image-compression.util';
 
 @Component({
   selector: 'app-admin-post-create-page',
@@ -46,6 +48,7 @@ export class AdminPostCreatePageComponent implements OnInit {
   readonly isLoading = signal(false);
   readonly isUploadingCover = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly uploadOptimizationMessage = signal<string | null>(null);
   readonly categories = signal<AdminCategory[]>([]);
   readonly selectedCover = signal<AdminMedia | PostCoverMedia | null>(null);
   readonly editingPostId = signal<number | null>(null);
@@ -167,7 +170,7 @@ export class AdminPostCreatePageComponent implements OnInit {
     });
   }
 
-  onCoverFileSelected(event: Event): void {
+  async onCoverFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
 
@@ -178,17 +181,32 @@ export class AdminPostCreatePageComponent implements OnInit {
     this.errorMessage.set(null);
     this.isUploadingCover.set(true);
 
-    this.mediaService.upload(file).subscribe({
-      next: (response) => {
-        this.selectedCover.set(response.data);
-        this.form.patchValue({ cover_media_id: response.data.id });
-        this.isUploadingCover.set(false);
-        input.value = '';
-      },
-      error: () => {
-        this.errorMessage.set('Não foi possível enviar a imagem de capa.');
-        this.isUploadingCover.set(false);
-      },
-    });
+    try {
+      const compressedFile = await compressImageFile(file);
+
+      if (compressedFile.size < file.size) {
+        this.uploadOptimizationMessage.set(
+          `Imagem otimizada: ${this.formatSize(file.size)} → ${this.formatSize(compressedFile.size)}.`,
+        );
+      } else {
+        this.uploadOptimizationMessage.set(null);
+      }
+
+      const response = await firstValueFrom(this.mediaService.upload(compressedFile));
+
+      this.selectedCover.set(response.data);
+      this.form.patchValue({ cover_media_id: response.data.id });
+      input.value = '';
+    } catch {
+      this.errorMessage.set('Não foi possível enviar a imagem de capa.');
+    } finally {
+      this.isUploadingCover.set(false);
+    }
+  }
+
+  private formatSize(sizeInBytes: number): string {
+    const sizeInMegabytes = sizeInBytes / (1024 * 1024);
+
+    return `${sizeInMegabytes.toFixed(1)} MB`;
   }
 }

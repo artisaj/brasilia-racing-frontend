@@ -1,5 +1,14 @@
 <div class="app-shell">
-	<router-outlet></router-outlet>
+	<div class="app-content">
+		<router-outlet></router-outlet>
+	</div>
+
+	<footer class="app-footer">
+		<a href="https://www.instagram.com/brasiliaracingoficial" target="_blank" rel="noopener noreferrer" aria-label="Instagram Brasília Racing">
+			<i class="fa-brands fa-instagram" aria-hidden="true"></i>
+		</a>
+		<p>© 2026 Brasília Racing • Portal Oficial de Automobilismo do DF</p>
+	</footer>
 
 	@if (loadingState.isLoading()) {
 		<div class="global-loading" role="status" aria-live="polite" aria-label="Carregando conteúdo">

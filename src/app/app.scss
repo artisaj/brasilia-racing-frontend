@@ -4,6 +4,49 @@
 
 .app-shell {
 	min-height: 100dvh;
+	display: flex;
+	flex-direction: column;
+}
+
+.app-content {
+	flex: 1;
+}
+
+.app-footer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 18px 12px 20px;
+	border-top: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 55%, transparent);
+	background: color-mix(in srgb, var(--mat-sys-surface-container-low) 60%, transparent);
+
+	a {
+		color: color-mix(in srgb, var(--mat-sys-primary) 82%, white 18%);
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 34px;
+		height: 34px;
+		border-radius: 999px;
+		border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 62%, transparent);
+		font-size: 18px;
+		transition: transform 120ms ease, border-color 120ms ease;
+
+		&:hover {
+			transform: translateY(-1px);
+			border-color: color-mix(in srgb, var(--mat-sys-primary) 58%, var(--mat-sys-outline-variant));
+		}
+	}
+
+	p {
+		margin: 0;
+		text-align: center;
+		font: var(--mat-sys-body-small);
+		color: var(--mat-sys-on-surface-variant);
+	}
 }
 
 .global-loading {

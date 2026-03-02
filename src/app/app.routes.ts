@@ -11,6 +11,7 @@ import { AdminCommentsPageComponent } from './features/admin/comments/admin-comm
 import { AdminSponsorsPageComponent } from './features/admin/sponsors/admin-sponsors-page.component';
 import { AdminAuditLogsPageComponent } from './features/admin/audit-logs/admin-audit-logs-page.component';
 import { adminSurfaceGuard, publicSurfaceGuard } from './core/guards/host-surface.guard';
+import { adminAuthGuard } from './core/guards/admin-auth.guard';
 
 export const routes: Routes = [
 	{
@@ -37,41 +38,49 @@ export const routes: Routes = [
 		path: 'admin',
 		component: AdminDashboardPageComponent,
 		canMatch: [adminSurfaceGuard],
+		canActivate: [adminAuthGuard],
 	},
 	{
 		path: 'admin/posts',
 		component: AdminPostsPageComponent,
 		canMatch: [adminSurfaceGuard],
+		canActivate: [adminAuthGuard],
 	},
 	{
 		path: 'admin/posts/new',
 		component: AdminPostCreatePageComponent,
 		canMatch: [adminSurfaceGuard],
+		canActivate: [adminAuthGuard],
 	},
 	{
 		path: 'admin/posts/:id/edit',
 		component: AdminPostCreatePageComponent,
 		canMatch: [adminSurfaceGuard],
+		canActivate: [adminAuthGuard],
 	},
 	{
 		path: 'admin/categories',
 		component: AdminCategoriesPageComponent,
 		canMatch: [adminSurfaceGuard],
+		canActivate: [adminAuthGuard],
 	},
 	{
 		path: 'admin/comments',
 		component: AdminCommentsPageComponent,
 		canMatch: [adminSurfaceGuard],
+		canActivate: [adminAuthGuard],
 	},
 	{
 		path: 'admin/sponsors',
 		component: AdminSponsorsPageComponent,
 		canMatch: [adminSurfaceGuard],
+		canActivate: [adminAuthGuard],
 	},
 	{
 		path: 'admin/audit-logs',
 		component: AdminAuditLogsPageComponent,
 		canMatch: [adminSurfaceGuard],
+		canActivate: [adminAuthGuard],
 	},
 	{
 		path: '**',
