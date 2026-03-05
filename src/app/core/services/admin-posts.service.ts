@@ -71,6 +71,9 @@ export interface CreatePostPayload {
   status?: PostStatus;
   category_id?: number | null;
   cover_media_id?: number | null;
+  cover_focus_x?: number;
+  cover_focus_y?: number;
+  cover_zoom?: number;
 }
 
 export interface UpdatePostPayload extends CreatePostPayload {}

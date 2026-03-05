@@ -33,6 +33,13 @@
   overflow: hidden;
 }
 
+.featured-cover-wrap {
+  width: 100%;
+  height: 170px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--mat-sys-surface-container-low) 82%, transparent);
+}
+
 .remove-btn {
   position: absolute;
   top: 8px;
@@ -49,9 +56,10 @@
 
 .featured-cover {
   width: 100%;
-  height: 170px;
+  height: 100%;
   object-fit: cover;
   transition: transform 120ms ease-out;
+  display: block;
 }
 
 .featured-body {
@@ -173,7 +181,7 @@
 
 .highlight-preview {
   width: 100%;
-  aspect-ratio: 960 / 340;
+  aspect-ratio: 1120 / 400;
   min-height: 260px;
   border-radius: 14px;
   overflow: hidden;
@@ -191,7 +199,7 @@
 .highlight-preview-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   pointer-events: none;
   transition: transform 120ms ease-out;
 }
@@ -246,11 +254,19 @@
   background: color-mix(in srgb, var(--mat-sys-surface-container-low) 80%, transparent);
 }
 
-.available-cover {
+.available-cover-wrap {
   width: 100%;
   height: 120px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--mat-sys-surface-container-low) 82%, transparent);
+}
+
+.available-cover {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   transition: transform 120ms ease-out;
+  display: block;
 }
 
 .available-body {

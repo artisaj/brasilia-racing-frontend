@@ -62,7 +62,43 @@
             }
 
             @if (selectedCover(); as cover) {
-              <img [src]="cover.card_url" alt="Prévia da capa" class="preview-media" />
+              <img [src]="cover.full_url" alt="Prévia da capa" class="preview-media post-cover-preview" />
+
+              <section class="post-cover-editor">
+                <div
+                  class="post-cover-cropper"
+                  (pointerdown)="startCoverDrag($event)"
+                  (pointermove)="onCoverDrag($event)"
+                  (pointerup)="endCoverDrag($event)"
+                  (pointercancel)="endCoverDrag($event)"
+                  (pointerleave)="endCoverDrag($event)"
+                >
+                  <img
+                    [src]="cover.hero_url || cover.full_url"
+                    [alt]="previewTitle()"
+                    class="post-cover-cropper-image"
+                    [style.object-position]="coverObjectPosition()"
+                    [style.transform]="coverTransform()"
+                    [style.transform-origin]="coverObjectPosition()"
+                    draggable="false"
+                  />
+                </div>
+
+                <div class="post-cover-editor-controls">
+                  <label for="postCoverZoom">Zoom da capa</label>
+                  <input
+                    id="postCoverZoom"
+                    type="range"
+                    min="0.5"
+                    max="2"
+                    step="0.01"
+                    [value]="coverZoom()"
+                    (input)="adjustCoverZoom($event)"
+                  />
+                  <p class="muted">{{ (coverZoom() * 100).toFixed(0) }}%</p>
+                  <button mat-stroked-button type="button" (click)="resetCoverPosition()">Resetar corte</button>
+                </div>
+              </section>
             }
           </div>
 
@@ -87,12 +123,17 @@
         <p class="muted subtitle">{{ previewSubtitle() }}</p>
 
         @if (selectedCover(); as cover) {
-          <app-image-viewer
-            [src]="cover.hero_url"
-            [alt]="previewTitle()"
-            previewMaxHeight="clamp(220px, 26vw, 340px)"
-            openLabel="Abrir imagem"
-          ></app-image-viewer>
+          <div class="preview-cover-wrap">
+            <img
+              [src]="cover.hero_url || cover.full_url"
+              [alt]="previewTitle()"
+              class="preview-cover"
+              [style.object-position]="coverObjectPosition()"
+              [style.transform]="coverTransform()"
+              [style.transform-origin]="coverObjectPosition()"
+              draggable="false"
+            />
+          </div>
         }
 
         <div class="preview-content" [innerHTML]="previewContent()"></div>

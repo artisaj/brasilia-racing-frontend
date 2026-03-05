@@ -64,8 +64,17 @@
         @for (post of posts(); track post.id) {
           <article class="feed-item">
             @if (post.cover_media?.card_url; as cardUrl) {
-              <a [routerLink]="['/noticias', post.slug]" [attr.aria-label]="'Abrir notícia ' + post.title">
-                <img [src]="cardUrl" [alt]="post.title" class="feed-cover" />
+              <a [routerLink]="['/noticias', post.slug]" [attr.aria-label]="'Abrir notícia ' + post.title" class="feed-cover-link">
+                <div class="feed-cover-wrap">
+                  <img
+                    [src]="cardUrl"
+                    [alt]="post.title"
+                    class="feed-cover"
+                    [style.object-position]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
+                    [style.transform]="'scale(' + (post.cover_zoom ?? 1) + ')'"
+                    [style.transform-origin]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
+                  />
+                </div>
               </a>
             }
 

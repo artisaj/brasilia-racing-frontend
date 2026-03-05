@@ -8,7 +8,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { PublicPost, PublicPostsService } from '../../../core/services/public-posts.service';
 import { PublicTopbarComponent } from '../shared/public-topbar.component';
-import { ImageViewerComponent } from '../../../shared/components/image-viewer/image-viewer.component';
 import { PublicComment, PublicCommentsService } from '../../../core/services/public-comments.service';
 
 @Component({
@@ -21,7 +20,6 @@ import { PublicComment, PublicCommentsService } from '../../../core/services/pub
     MatInputModule,
     MatButtonModule,
     PublicTopbarComponent,
-    ImageViewerComponent,
   ],
   templateUrl: './post-detail-page.component.html',
   styleUrl: './post-detail-page.component.scss',

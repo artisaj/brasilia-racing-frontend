@@ -13,6 +13,7 @@ export class ImageViewerComponent {
   readonly src = input.required<string>();
   readonly alt = input('Imagem');
   readonly previewMaxHeight = input('clamp(220px, 28vw, 360px)');
+  readonly previewObjectFit = input<'cover' | 'contain'>('cover');
   readonly openLabel = input('Abrir imagem');
   readonly showOpenButton = input(true);
 

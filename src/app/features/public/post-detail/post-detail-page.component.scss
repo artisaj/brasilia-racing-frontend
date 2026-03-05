@@ -8,6 +8,22 @@
   gap: 14px;
 }
 
+.article-cover-wrap {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  aspect-ratio: 1120 / 400;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.article-cover {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 120ms ease-out;
+}
+
 .article-card h1 {
   margin: 0;
   font: var(--mat-sys-headline-medium);

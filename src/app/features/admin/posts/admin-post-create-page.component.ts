@@ -15,7 +15,6 @@ import { AdminPostsService, PostCoverMedia } from '../../../core/services/admin-
 import { AdminCategoriesService, AdminCategory } from '../../../core/services/admin-categories.service';
 import { AdminMedia, AdminMediaService } from '../../../core/services/admin-media.service';
 import { AdminShellComponent } from '../shared/admin-shell.component';
-import { ImageViewerComponent } from '../../../shared/components/image-viewer/image-viewer.component';
 import { compressImageFile } from '../../../core/utils/image-compression.util';
 
 @Component({
@@ -31,7 +30,6 @@ import { compressImageFile } from '../../../core/utils/image-compression.util';
     MatFormFieldModule,
     MatSelectModule,
     AngularEditorModule,
-    ImageViewerComponent,
   ],
   templateUrl: './admin-post-create-page.component.html',
   styleUrl: './admin-post-create-page.component.scss',
@@ -52,6 +50,16 @@ export class AdminPostCreatePageComponent implements OnInit {
   readonly categories = signal<AdminCategory[]>([]);
   readonly selectedCover = signal<AdminMedia | PostCoverMedia | null>(null);
   readonly editingPostId = signal<number | null>(null);
+  readonly coverFocusX = signal(50);
+  readonly coverFocusY = signal(50);
+  readonly coverZoom = signal(1);
+  readonly isDraggingCover = signal(false);
+  readonly coverObjectPosition = computed(() => `${this.coverFocusX()}% ${this.coverFocusY()}%`);
+  readonly coverTransform = computed(() => `scale(${this.coverZoom()})`);
+
+  private activePointerId: number | null = null;
+  private lastPointerX = 0;
+  private lastPointerY = 0;
 
   readonly form = this.formBuilder.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(255)]],
@@ -60,6 +68,9 @@ export class AdminPostCreatePageComponent implements OnInit {
     content: ['', [Validators.required]],
     category_id: [null as number | null],
     cover_media_id: [null as number | null],
+    cover_focus_x: [50],
+    cover_focus_y: [50],
+    cover_zoom: [1],
   });
 
   readonly editorConfig: AngularEditorConfig = {
@@ -114,9 +125,15 @@ export class AdminPostCreatePageComponent implements OnInit {
           content: post.content,
           category_id: post.category_id,
           cover_media_id: post.cover_media?.id ?? null,
+          cover_focus_x: post.cover_focus_x ?? 50,
+          cover_focus_y: post.cover_focus_y ?? 50,
+          cover_zoom: post.cover_zoom ?? 1,
         });
 
         this.selectedCover.set(post.cover_media ?? null);
+        this.coverFocusX.set(post.cover_focus_x ?? 50);
+        this.coverFocusY.set(post.cover_focus_y ?? 50);
+        this.coverZoom.set(post.cover_zoom ?? 1);
         this.isLoading.set(false);
       },
       error: () => {
@@ -151,6 +168,9 @@ export class AdminPostCreatePageComponent implements OnInit {
     const postId = this.editingPostId();
     const payload = {
       ...this.form.getRawValue(),
+      cover_focus_x: this.coverFocusX(),
+      cover_focus_y: this.coverFocusY(),
+      cover_zoom: this.coverZoom(),
       status: 'published' as const,
     };
 
@@ -195,13 +215,114 @@ export class AdminPostCreatePageComponent implements OnInit {
       const response = await firstValueFrom(this.mediaService.upload(compressedFile));
 
       this.selectedCover.set(response.data);
-      this.form.patchValue({ cover_media_id: response.data.id });
+      this.form.patchValue({
+        cover_media_id: response.data.id,
+        cover_focus_x: this.coverFocusX(),
+        cover_focus_y: this.coverFocusY(),
+        cover_zoom: this.coverZoom(),
+      });
       input.value = '';
     } catch {
       this.errorMessage.set('Não foi possível enviar a imagem de capa.');
     } finally {
       this.isUploadingCover.set(false);
     }
+  }
+
+  resetCoverPosition(): void {
+    this.coverFocusX.set(50);
+    this.coverFocusY.set(50);
+    this.coverZoom.set(1);
+    this.syncCoverControls();
+  }
+
+  adjustCoverZoom(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    const value = Number(target?.value ?? 1);
+
+    if (!Number.isFinite(value)) {
+      return;
+    }
+
+    this.coverZoom.set(this.clampZoom(value));
+    this.syncCoverControls();
+  }
+
+  startCoverDrag(event: PointerEvent): void {
+    if (!this.selectedCover()) {
+      return;
+    }
+
+    const target = event.currentTarget as HTMLElement | null;
+
+    if (!target) {
+      return;
+    }
+
+    this.activePointerId = event.pointerId;
+    this.lastPointerX = event.clientX;
+    this.lastPointerY = event.clientY;
+    this.isDraggingCover.set(true);
+    target.setPointerCapture(event.pointerId);
+  }
+
+  onCoverDrag(event: PointerEvent): void {
+    if (!this.isDraggingCover() || this.activePointerId !== event.pointerId) {
+      return;
+    }
+
+    const target = event.currentTarget as HTMLElement | null;
+
+    if (!target) {
+      return;
+    }
+
+    const rect = target.getBoundingClientRect();
+
+    if (rect.width <= 0 || rect.height <= 0) {
+      return;
+    }
+
+    const deltaXPercent = ((event.clientX - this.lastPointerX) / rect.width) * 100;
+    const deltaYPercent = ((event.clientY - this.lastPointerY) / rect.height) * 100;
+
+    this.lastPointerX = event.clientX;
+    this.lastPointerY = event.clientY;
+
+    this.coverFocusX.update((value) => this.clampPercent(value - deltaXPercent));
+    this.coverFocusY.update((value) => this.clampPercent(value - deltaYPercent));
+    this.syncCoverControls();
+  }
+
+  endCoverDrag(event: PointerEvent): void {
+    if (this.activePointerId !== event.pointerId) {
+      return;
+    }
+
+    const target = event.currentTarget as HTMLElement | null;
+
+    if (target?.hasPointerCapture(event.pointerId)) {
+      target.releasePointerCapture(event.pointerId);
+    }
+
+    this.activePointerId = null;
+    this.isDraggingCover.set(false);
+  }
+
+  private syncCoverControls(): void {
+    this.form.patchValue({
+      cover_focus_x: this.coverFocusX(),
+      cover_focus_y: this.coverFocusY(),
+      cover_zoom: this.coverZoom(),
+    }, { emitEvent: false });
+  }
+
+  private clampPercent(value: number): number {
+    return Math.max(0, Math.min(100, Math.round(value)));
+  }
+
+  private clampZoom(value: number): number {
+    return Math.max(0.5, Math.min(2, Math.round(value * 100) / 100));
   }
 
   private formatSize(sizeInBytes: number): string {

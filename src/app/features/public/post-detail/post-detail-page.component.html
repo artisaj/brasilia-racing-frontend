@@ -16,13 +16,16 @@
   } @else if (post(); as article) {
     <article class="article-wrap">
       @if (article.cover_media?.hero_url; as heroUrl) {
-        <app-image-viewer
-          [src]="heroUrl"
-          [alt]="article.title"
-          previewMaxHeight="clamp(240px, 32vw, 420px)"
-          [showOpenButton]="false"
-          openLabel="Abrir capa"
-        ></app-image-viewer>
+        <div class="article-cover-wrap">
+          <img
+            class="article-cover"
+            [src]="heroUrl"
+            [alt]="article.title"
+            [style.object-position]="(article.cover_focus_x ?? 50) + '% ' + (article.cover_focus_y ?? 50) + '%'"
+            [style.transform]="'scale(' + (article.cover_zoom ?? 1) + ')'"
+            [style.transform-origin]="(article.cover_focus_x ?? 50) + '% ' + (article.cover_focus_y ?? 50) + '%'"
+          />
+        </div>
       }
 
       <mat-card class="panel-card article-card">

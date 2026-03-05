@@ -38,14 +38,16 @@
                 </button>
 
                 @if (post.cover_media?.card_url; as coverUrl) {
-                  <img
-                    [src]="coverUrl"
-                    [alt]="post.title"
-                    class="featured-cover"
-                    [style.object-position]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
-                    [style.transform]="'scale(' + (post.cover_zoom ?? 1) + ')'"
-                    [style.transform-origin]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
-                  />
+                  <div class="featured-cover-wrap">
+                    <img
+                      [src]="coverUrl"
+                      [alt]="post.title"
+                      class="featured-cover"
+                      [style.object-position]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
+                      [style.transform]="'scale(' + (post.cover_zoom ?? 1) + ')'"
+                      [style.transform-origin]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
+                    />
+                  </div>
                 }
 
                 <div class="featured-body">
@@ -186,14 +188,16 @@
               @for (post of availablePosts(); track post.id) {
                 <article class="available-card">
                   @if (post.cover_media?.card_url; as coverUrl) {
-                    <img
-                      [src]="coverUrl"
-                      [alt]="post.title"
-                      class="available-cover"
-                      [style.object-position]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
-                      [style.transform]="'scale(' + (post.cover_zoom ?? 1) + ')'"
-                      [style.transform-origin]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
-                    />
+                    <div class="available-cover-wrap">
+                      <img
+                        [src]="coverUrl"
+                        [alt]="post.title"
+                        class="available-cover"
+                        [style.object-position]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
+                        [style.transform]="'scale(' + (post.cover_zoom ?? 1) + ')'"
+                        [style.transform-origin]="(post.cover_focus_x ?? 50) + '% ' + (post.cover_focus_y ?? 50) + '%'"
+                      />
+                    </div>
                   }
 
                   <div class="available-body">
