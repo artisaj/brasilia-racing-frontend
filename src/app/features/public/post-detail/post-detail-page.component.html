@@ -21,6 +21,7 @@
             class="article-cover"
             [src]="heroUrl"
             [alt]="article.title"
+            [style.object-fit]="(article.cover_zoom ?? 1) > 1 ? 'cover' : 'contain'"
             [style.object-position]="(article.cover_focus_x ?? 50) + '% ' + (article.cover_focus_y ?? 50) + '%'"
             [style.transform]="'scale(' + (article.cover_zoom ?? 1) + ')'"
             [style.transform-origin]="(article.cover_focus_x ?? 50) + '% ' + (article.cover_focus_y ?? 50) + '%'"

@@ -56,6 +56,7 @@ export class AdminPostCreatePageComponent implements OnInit {
   readonly isDraggingCover = signal(false);
   readonly coverObjectPosition = computed(() => `${this.coverFocusX()}% ${this.coverFocusY()}%`);
   readonly coverTransform = computed(() => `scale(${this.coverZoom()})`);
+  readonly coverObjectFit = computed(() => (this.coverZoom() > 1 ? 'cover' : 'contain'));
 
   private activePointerId: number | null = null;
   private lastPointerX = 0;
